@@ -1,0 +1,28 @@
+services:
+  syllabusapi:
+    image: syllabusapi:dev
+    build:
+      context: .
+      dockerfile: SyllabusAPI/Dockerfile
+    volumes:
+      - ./SyllabusAPI:/app
+    depends_on:
+      - db
+    networks:
+      - syllabus-net
+    environment:
+      - ASPNETCORE_ENVIRONMENT=Development
+      - ConnectionStrings__Default=Server=db;Database=SyllabusDb;User=sa;Password=YourStrong!Passw0rd;
+
+  db:
+    image: mcr.microsoft.com/mssql/server:2022-latest
+    environment:
+      SA_PASSWORD: "YourStrong!Passw0rd"
+      ACCEPT_EULA: "Y"
+    ports:
+      - "1433:1433"
+    networks:
+      - syllabus-net
+
+networks:
+  syllabus-net:

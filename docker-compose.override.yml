@@ -1,0 +1,9 @@
+services:
+  syllabusapi:
+    ports:
+      - "5000:8080"
+      - "5001:8081"
+    volumes:
+      - .:/app  # Ensure Docker Desktop has access to this path
+    environment:
+      - DOTNET_USE_POLLING_FILE_WATCHER=1

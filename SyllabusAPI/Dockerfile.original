@@ -1,0 +1,50 @@
+# See https://aka.ms/customizecontainer to learn how to customize your debug container and how Visual Studio uses this Dockerfile to build your images for faster debugging.
+
+# ------------------------------
+# Base Image
+# ------------------------------
+FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
+WORKDIR /app
+EXPOSE 8080
+EXPOSE 8081
+
+# ------------------------------
+# Build Stage
+# ------------------------------
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
+ARG BUILD_CONFIGURATION=Release
+WORKDIR /src
+
+# Copy all csproj files from solution
+COPY ["Syllabus.API/Syllabus.API.csproj", "Syllabus.API/"]
+COPY ["Syllabus.Application/Syllabus.Application.csproj", "Syllabus.Application/"]
+COPY ["Syllabus.Domain/Syllabus.Domain.csproj", "Syllabus.Domain/"]
+COPY ["Syllabus.Infrastructure/Syllabus.Infrastructure.csproj", "Syllabus.Infrastructure/"]
+COPY ["Syllabus.ApiContracts/Syllabus.ApiContracts.csproj", "Syllabus.ApiContracts/"]
+COPY ["Syllabus.Util/Syllabus.Util.csproj", "Syllabus.Util/"]
+
+# Restore dependencies
+RUN dotnet restore "Syllabus.API/Syllabus.API.csproj"
+
+# Copy entire source
+COPY . .
+
+# Build the app
+WORKDIR "/src/Syllabus.API"
+RUN dotnet build "Syllabus.API.csproj" -c $BUILD_CONFIGURATION -o /app/build
+
+# ------------------------------
+# Publish Stage
+# ------------------------------
+FROM build AS publish
+ARG BUILD_CONFIGURATION=Release
+RUN dotnet publish "Syllabus.API.csproj" -c $BUILD_CONFIGURATION -o /app/publish /p:UseAppHost=false
+
+# ------------------------------
+# Final Image
+# ------------------------------
+FROM base AS final
+WORKDIR /app
+COPY --from=publish /app/publish .
+
+ENTRYPOINT ["dotnet", "Syllabus.API.dll"]
