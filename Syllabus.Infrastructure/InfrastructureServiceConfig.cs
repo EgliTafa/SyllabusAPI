@@ -1,7 +1,9 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Syllabus.Domain.Sylabusses;
 using Syllabus.Infrastructure.Data;
+using Syllabus.Infrastructure.Repositories;
 using Syllabus.Util.Options;
 
 
@@ -23,7 +25,8 @@ namespace Syllabus.Infrastructure
             services.AddDbContext<SyllabusDbContext>(options =>
                 options.UseSqlServer(connectionOptions.DefaultConnection));
 
-            // services.AddScoped<ISyllabusRepository, SyllabusRepository>();
+            services.AddScoped<ISyllabusRepository, SyllabusRepository>();
+            services.AddScoped<ICourseRepository, CourseRepository>();
         }
     }
 }
