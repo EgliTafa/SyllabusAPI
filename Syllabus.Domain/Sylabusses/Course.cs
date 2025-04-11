@@ -13,5 +13,7 @@
         public int Credits { get; set; } //credits
         public EvaluationMethod Evaluation { get; set; }
         public CourseType Type { get; set; }
+
+        public CourseDetail? Detail { get; set; }
     }
 }

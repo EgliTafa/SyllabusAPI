@@ -15,6 +15,8 @@ namespace Syllabus.Infrastructure.Data
 
         public virtual DbSet<Sylabus> Syllabuses { get; set; }
         public virtual DbSet<Course> Courses { get; set; }
+        public virtual DbSet<CourseDetail> CourseDetails { get; set; }
+        public virtual DbSet<Topic> CourseTopics { get; set; }
 
         // Expose the identity table
         public virtual DbSet<UserEntity> Users { get; set; }
