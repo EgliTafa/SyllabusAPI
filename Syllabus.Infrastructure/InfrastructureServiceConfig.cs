@@ -7,7 +7,7 @@ using Syllabus.Util.Options;
 
 namespace Syllabus.Infrastructure
 {
-    public static class InfrastructureServiceRegistration
+    public static class InfrastructureServiceConfig
     {
         public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
