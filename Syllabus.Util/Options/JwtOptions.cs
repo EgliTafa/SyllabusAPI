@@ -1,16 +1,11 @@
 ﻿namespace Syllabus.Util.Options
 {
-    public class JwtServiceOptions
-    {
-        public const string Key = "Jwt";
-        public JwtOptions Jwt { get; set; }
-    }
-
     public class JwtOptions
     {
-        public string Issuer { get; set; }
+        public const string SectionName = "Jwt";
 
-        public string Audience { get; set; }
-
+        public string Key { get; set; } = string.Empty;
+        public string Issuer { get; set; } = string.Empty;
+        public string Audience { get; set; } = string.Empty;
     }
 }
