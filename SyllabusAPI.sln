@@ -13,6 +13,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SyllabusAPI", "SyllabusAPI\
 	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syllabus.Application", "Syllabus.Application\Syllabus.Application.csproj", "{1FC92BCA-8481-451C-AF27-0512B317BAD2}"
+	ProjectSection(ProjectDependencies) = postProject
+		{BACAD712-9ED3-44E7-83A1-B1CAF7DC0604} = {BACAD712-9ED3-44E7-83A1-B1CAF7DC0604}
+		{D1550A27-1A12-47F9-BE78-3312BC2AAB6F} = {D1550A27-1A12-47F9-BE78-3312BC2AAB6F}
+	EndProjectSection
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Syllabus.Infrastructure", "Syllabus.Infrastructure\Syllabus.Infrastructure.csproj", "{916CBFE2-4B70-4170-80BC-FE99E96D7B37}"
 	ProjectSection(ProjectDependencies) = postProject

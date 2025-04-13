@@ -24,6 +24,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\Syllabus.Infrastructure\Syllabus.Infrastructure.csproj" />
+    <ProjectReference Include="..\Syllabus.Application\Syllabus.Application.csproj" />
   </ItemGroup>
 
 </Project>
