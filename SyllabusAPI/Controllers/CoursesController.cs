@@ -6,6 +6,7 @@ using Syllabus.Application.Courses.Create;
 using Syllabus.Application.Courses.Delete;
 using Syllabus.Application.Courses.GetById;
 using Syllabus.Application.Courses.Update;
+using SyllabusAPI.Helpers;
 using SyllabusApplication.Courses.Queries;
 
 namespace SyllabusAPI.Controllers
@@ -23,18 +24,8 @@ namespace SyllabusAPI.Controllers
         public async Task<IActionResult> ListAllCourses(ListAllCoursesRequestApiDTO request)
         {
             var result = await _mediator.Send(new ListAllCoursesQuery(request));
+            return result.ToActionResult(this);
 
-            return result.Match(
-                success => Ok(success),
-                error => Problem(
-                    detail: error.FirstOrDefault().Description,
-                    statusCode: error.FirstOrDefault().Type switch
-                    {
-                        ErrorType.NotFound => StatusCodes.Status404NotFound,
-                        _ => StatusCodes.Status400BadRequest
-                    }
-                )
-            );
         }
 
         [HttpGet("courses/{courseId:int}")]
@@ -42,35 +33,14 @@ namespace SyllabusAPI.Controllers
         {
             var request = new GetCourseByIdRequest { CourseId = courseId };
             var result = await _mediator.Send(new GetCourseByIdQuery(request));
-
-            return result.Match(
-                success => Ok(success),
-                error => Problem(
-                    detail: error.FirstOrDefault().Description,
-                    statusCode: error.FirstOrDefault().Type switch
-                    {
-                        ErrorType.NotFound => StatusCodes.Status404NotFound,
-                        _ => StatusCodes.Status400BadRequest
-                    }
-                )
-            );
+            return result.ToActionResult(this);
         }
 
         [HttpPost("courses")]
         public async Task<IActionResult> CreateCourse(CreateCourseRequestApiDTO request)
         {
             var result = await _mediator.Send(new CreateCourseCommand(request));
-            return result.Match(
-                success => CreatedAtAction(nameof(GetCourseById), new { courseId = success.Id }, success),
-                error => Problem(
-                    detail: error.FirstOrDefault().Description,
-                    statusCode: error.FirstOrDefault().Type switch
-                    {
-                        ErrorType.NotFound => StatusCodes.Status404NotFound,
-                        _ => StatusCodes.Status400BadRequest
-                    }
-                )
-            );
+            return result.ToActionResult(this);
         }
 
         [HttpDelete("courses/{courseId:int}")]
@@ -79,17 +49,7 @@ namespace SyllabusAPI.Controllers
             var request = new DeleteCourseRequestApiDTO { CourseId = courseId };
             var result = await _mediator.Send(new DeleteCourseCommand(request));
 
-            return result.Match<IActionResult>(
-                _ => NoContent(),
-                error => Problem(
-                    detail: error.FirstOrDefault().Description,
-                    statusCode: error.FirstOrDefault().Type switch
-                    {
-                        ErrorType.NotFound => StatusCodes.Status404NotFound,
-                        _ => StatusCodes.Status400BadRequest
-                    }
-                )
-            );
+            return result.ToNoContentResult(this);
         }
 
         [HttpPut("courses/{courseId:int}")]
@@ -101,18 +61,7 @@ namespace SyllabusAPI.Controllers
             }
 
             var result = await _mediator.Send(new UpdateCourseCommand(request));
-
-            return result.Match(
-                success => Ok(success),
-                error => Problem(
-                    detail: error.FirstOrDefault().Description,
-                    statusCode: error.FirstOrDefault().Type switch
-                    {
-                        ErrorType.NotFound => StatusCodes.Status404NotFound,
-                        _ => StatusCodes.Status400BadRequest
-                    }
-                )
-            );
+            return result.ToActionResult(this);
         }
 
     }
