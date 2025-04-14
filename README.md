@@ -24,7 +24,7 @@ A full-stack academic syllabus and subject management system designed for profes
 
 ```
 SyllabusAPI/
-├── Syllabus.API/              → ASP.NET Core Web API
+├── SyllabusAPI/              → ASP.NET Core Web API
 ├── Syllabus.Application/      → (planned) CQRS, MediatR commands/queries
 ├── Syllabus.Domain/           → Entities, Enums, Repositories
 ├── Syllabus.Infrastructure/   → EF Core, DbContext, Repositories
