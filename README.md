@@ -9,7 +9,7 @@ A full-stack academic syllabus and subject management system designed for profes
 | Layer             | Technology                       |
 |------------------|----------------------------------|
 | Frontend (planned) | React (TypeScript)              |
-| Backend           | ASP.NET Core 8 / C#              |
+| Backend           | .NET 9 / C#              |
 | Authentication    | ASP.NET Identity + JWT           |
 | ORM               | Entity Framework Core (SQL Server) |
 | Database          | Microsoft SQL Server             |
