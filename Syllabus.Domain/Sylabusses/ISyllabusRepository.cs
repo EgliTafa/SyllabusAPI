@@ -6,5 +6,6 @@
         ValueTask<List<Sylabus>> GetAllAsync();
         ValueTask AddAsync(Sylabus syllabus);
         void Remove(Sylabus syllabus);
+        ValueTask SaveChangesAsync();
     }
 }

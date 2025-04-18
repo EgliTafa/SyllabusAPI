@@ -72,6 +72,15 @@ namespace Syllabus.Infrastructure.Repositories
         {
             _context.CourseTopics.Remove(topic);
         }
+        public async ValueTask<List<Course>> GetByIdsAsync(IEnumerable<int> ids)
+        {
+            return await _context.Courses
+                .Include(c => c.Detail!)
+                    .ThenInclude(d => d.Topics)
+                .Where(c => ids.Contains(c.Id))
+                .ToListAsync();
+        }
+
 
         public async ValueTask SaveChangesAsync()
         {

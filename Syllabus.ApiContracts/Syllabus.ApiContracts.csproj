@@ -10,8 +10,4 @@
     <ProjectReference Include="..\Syllabus.Domain\Syllabus.Domain.csproj" />
   </ItemGroup>
 
-  <ItemGroup>
-    <Folder Include="Syllabus\" />
-  </ItemGroup>
-
 </Project>

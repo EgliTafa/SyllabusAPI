@@ -35,5 +35,10 @@ namespace Syllabus.Infrastructure.Repositories
         {
             _context.Syllabuses.Remove(syllabus);
         }
+        public async ValueTask SaveChangesAsync()
+        {
+            await _context.SaveChangesAsync();
+        }
+
     }
 }

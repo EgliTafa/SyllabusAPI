@@ -21,7 +21,7 @@ namespace SyllabusAPI.Controllers
         }
 
         [HttpGet("courses")]
-        public async Task<IActionResult> ListAllCourses(ListAllCoursesRequestApiDTO request)
+        public async Task<IActionResult> ListAllCourses([FromQuery] ListAllCoursesRequestApiDTO request)
         {
             var result = await _mediator.Send(new ListAllCoursesQuery(request));
             return result.ToActionResult(this);
@@ -29,7 +29,7 @@ namespace SyllabusAPI.Controllers
         }
 
         [HttpGet("courses/{courseId:int}")]
-        public async Task<IActionResult> GetCourseById(int courseId)
+        public async Task<IActionResult> GetCourseById([FromRoute] int courseId)
         {
             var request = new GetCourseByIdRequest { CourseId = courseId };
             var result = await _mediator.Send(new GetCourseByIdQuery(request));
@@ -37,14 +37,14 @@ namespace SyllabusAPI.Controllers
         }
 
         [HttpPost("courses")]
-        public async Task<IActionResult> CreateCourse(CreateCourseRequestApiDTO request)
+        public async Task<IActionResult> CreateCourse([FromBody] CreateCourseRequestApiDTO request)
         {
             var result = await _mediator.Send(new CreateCourseCommand(request));
             return result.ToActionResult(this);
         }
 
         [HttpDelete("courses/{courseId:int}")]
-        public async Task<IActionResult> DeleteCourse(int courseId)
+        public async Task<IActionResult> DeleteCourse([FromRoute] int courseId)
         {
             var request = new DeleteCourseRequestApiDTO { CourseId = courseId };
             var result = await _mediator.Send(new DeleteCourseCommand(request));
