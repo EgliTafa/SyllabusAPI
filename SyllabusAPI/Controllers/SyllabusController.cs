@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Syllabus.ApiContracts.Syllabus;
+using Syllabus.Application.Syllabus.Create;
 using Syllabus.Application.Syllabus.Delete;
 using Syllabus.Application.Syllabus.GetById;
 using Syllabus.Application.Syllabus.List;
@@ -30,6 +31,13 @@ namespace SyllabusAPI.Controllers
         {
             var request = new GetSyllabusByIdRequestApiDTO { SyllabusId = syllabusId };
             var result = await _mediator.Send(new GetSyllabusByIdQuery(request));
+            return result.ToActionResult(this);
+        }
+
+        [HttpPost("syllabuses")]
+        public async Task<IActionResult> CreateSyllabus([FromBody] CreateSyllabusRequestApiDTO request)
+        {
+            var result = await _mediator.Send(new CreateSyllabusCommand(request));
             return result.ToActionResult(this);
         }
 
