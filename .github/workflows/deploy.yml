@@ -14,7 +14,6 @@ permissions:
 env:
   ACR_LOGIN_SERVER: syllabusregistry.azurecr.io
   ACR_REPOSITORY: syllabusapi
-  SOLUTION_FILE: SyllabusAPI/SyllabusAPI.sln
 
 jobs:
   build-push-migrate:
@@ -74,16 +73,13 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore ${{ env.SOLUTION_FILE }}
+        run: dotnet restore SyllabusAPI.sln
 
       - name: Install dotnet-ef global tool
         run: dotnet tool install --global dotnet-ef
 
       - name: Add dotnet tools to PATH
         run: echo "${HOME}/.dotnet/tools" >> $GITHUB_PATH
-
-      - name: Verify dotnet-ef installation
-        run: dotnet ef --version
 
       - name: Apply EF Core migrations
         run: dotnet ef database update --project Syllabus.Infrastructure --startup-project SyllabusAPI --context SyllabusDbContext
