@@ -9,7 +9,7 @@ on:
       - 'v*.*.*'  # Semantic versioning tags
 
 env:
-  ACR_LOGIN_SERVER: youracrname.azurecr.io  # Replace with your actual ACR login server
+  ACR_LOGIN_SERVER: syllabusregistry.azurecr.io
   ACR_REPOSITORY: syllabusapi
 
 jobs:
