@@ -81,6 +81,24 @@ jobs:
       - name: Add dotnet tools to PATH
         run: echo "${HOME}/.dotnet/tools" >> $GITHUB_PATH
 
+      - name: Wait for SQL database to be ready
+        run: |
+          sudo apt-get update && sudo apt-get install -y mssql-tools unixodbc-dev
+          echo "Checking SQL database availability..."
+          for i in {1..10}; do
+            if /opt/mssql-tools/bin/sqlcmd -S ${{ secrets.SQL_SERVER }} -U ${{ secrets.SQL_USER }} -P ${{ secrets.SQL_PASSWORD }} -d master -Q "SELECT 1" ; then
+              echo "✅ SQL database is ready!"
+              break
+            else
+              echo "❌ SQL database not ready yet. Retrying in 15 seconds..."
+              sleep 15
+            fi
+            if [[ $i -eq 10 ]]; then
+              echo "❌ Database did not become available after 10 attempts. Failing the job."
+              exit 1
+            fi
+          done
+
       - name: Apply EF Core migrations
         run: dotnet ef database update --project Syllabus.Infrastructure --startup-project SyllabusAPI --context SyllabusDbContext
         env:
