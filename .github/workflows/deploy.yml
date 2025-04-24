@@ -1,4 +1,4 @@
-name: Build, Push, and Apply Migrations to Azure SQL
+﻿name: Build, Push, and Apply Migrations to Azure SQL
 
 on:
   push:
@@ -6,11 +6,14 @@ on:
       - development
       - main
     tags:
-      - 'v*.*.*'  # Semantic versioning tags like v1.0.0
+      - 'v*.*.*'
+
+permissions:
+  contents: read
 
 env:
-  ACR_LOGIN_SERVER: syllabusregistry.azurecr.io        # Your ACR login server
-  ACR_REPOSITORY: syllabusapi                         # Docker repo name in ACR
+  ACR_LOGIN_SERVER: syllabusregistry.azurecr.io
+  ACR_REPOSITORY: syllabusapi
 
 jobs:
   build-push-migrate:
@@ -20,7 +23,15 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
         with:
-          fetch-depth: 0  # Ensures tags are fetched too
+          fetch-depth: 0
+
+      - name: Cache NuGet packages
+        uses: actions/cache@v3
+        with:
+          path: ~/.nuget/packages
+          key: ${{ runner.os }}-nuget-${{ hashFiles('**/*.csproj') }}
+          restore-keys: |
+            ${{ runner.os }}-nuget-
 
       - name: Set up Docker Buildx
         uses: docker/setup-buildx-action@v3
@@ -72,3 +83,6 @@ jobs:
         run: dotnet ef database update --project Syllabus.Infrastructure --startup-project SyllabusAPI --context SyllabusDbContext
         env:
           ConnectionStrings__DefaultConnection: "Server=${{ secrets.SQL_SERVER }};Database=${{ secrets.SQL_DATABASE }};User Id=${{ secrets.SQL_USER }};Password=${{ secrets.SQL_PASSWORD }};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
+
+      - name: Confirm migration success
+        run: echo "✅ Database migration applied successfully!"
