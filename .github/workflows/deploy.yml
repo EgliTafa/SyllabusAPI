@@ -73,7 +73,7 @@ jobs:
           dotnet-version: '9.0.x'
 
       - name: Restore dependencies
-        run: dotnet restore SyllabusAPI/SyllabusAPI.sln
+        run: dotnet restore SyllabusAPI.sln
 
       - name: Apply EF Core migrations
         run: dotnet ef database update --project Syllabus.Infrastructure --startup-project SyllabusAPI --context SyllabusDbContext
