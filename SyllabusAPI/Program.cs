@@ -1,14 +1,14 @@
-using Syllabus.Infrastructure;
-using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Identity;
-using Syllabus.Domain.Users;
-using Syllabus.Infrastructure.Data;
-using System.Text;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
-using System.Security.Claims;
-using Syllabus.Util.Options;
+using Microsoft.OpenApi.Models;
 using Syllabus.Application;
+using Syllabus.Domain.Users;
+using Syllabus.Infrastructure;
+using Syllabus.Infrastructure.Data;
+using Syllabus.Util.Options;
+using System.Security.Claims;
+using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -16,10 +16,15 @@ builder.Services.AddIdentity<UserEntity, IdentityRole>()
     .AddEntityFrameworkStores<SyllabusDbContext>()
     .AddDefaultTokenProviders();
 
-// JWT config
+builder.Configuration
+    .SetBasePath(Directory.GetCurrentDirectory())
+    .AddJsonFile("appsettings.json", optional: false, reloadOnChange: true)
+    .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
+    .AddEnvironmentVariables();
+
 var jwtOptions = new JwtOptions();
 builder.Configuration.GetSection(JwtOptions.SectionName).Bind(jwtOptions);
-var jwtKey = Encoding.UTF8.GetBytes(jwtOptions.Key);
+var jwtKey = Encoding.UTF8.GetBytes(jwtOptions.Key ?? throw new InvalidOperationException("JWT Key not found"));
 
 builder.Services.AddAuthentication(options =>
 {
@@ -42,13 +47,16 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
-
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
 
+builder.WebHost.ConfigureKestrel(serverOptions =>
+{
+    serverOptions.ListenAnyIP(8080); // no HTTPS binding in container
+});
+
 builder.Services.AddControllers();
-// Learn more about configuring OpenAPI at https://aka.ms/aspnet/openapi
-builder.Services.AddOpenApi();
+
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -61,7 +69,7 @@ builder.Services.AddSwaggerGen(c =>
 
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
-        Description = "Enter JWT as: Bearer {your token}",
+        Description = "Enter JWT as: Bearer {your_token}",
         Name = "Authorization",
         In = ParameterLocation.Header,
         Type = SecuritySchemeType.ApiKey,
@@ -75,8 +83,8 @@ builder.Services.AddSwaggerGen(c =>
             {
                 Reference = new OpenApiReference
                 {
-                    Type=ReferenceType.SecurityScheme,
-                    Id="Bearer"
+                    Type = ReferenceType.SecurityScheme,
+                    Id = "Bearer"
                 }
             },
             Array.Empty<string>()
@@ -86,23 +94,26 @@ builder.Services.AddSwaggerGen(c =>
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
-{
-    app.MapOpenApi();
-}
-
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Syllabus API v1");
-    c.RoutePrefix = string.Empty; //serve swagger at root
+    //c.RoutePrefix = string.Empty; // serve at root
 });
 
-app.UseHttpsRedirection();
+app.MapGet("/", context =>
+{
+    context.Response.Redirect("/swagger", permanent: false);
+    return Task.CompletedTask;
+});
 
+if (!app.Environment.IsProduction())
+{
+    app.UseHttpsRedirection();
+}
+
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
-
 app.Run();
