@@ -6,7 +6,7 @@ on:
       - development
       - main
     tags:
-      - 'v*.*.*'
+      - 'v*.*.*'  # Semantic versioning tags
 
 env:
   ACR_LOGIN_SERVER: youracrname.azurecr.io  # Replace with your actual ACR login server
@@ -66,17 +66,7 @@ jobs:
       - name: Restore dependencies
         run: dotnet restore
 
-      - name: Apply EF Core migrations if pending
-        run: |
-          echo "Checking for pending migrations..."
-          PENDING=$(dotnet ef migrations list --project Syllabus.Infrastructure --startup-project SyllabusAPI --context SyllabusDbContext | grep -v "(No migrations were found.)")
-          if [ -n "$PENDING" ]; then
-            echo "Pending migrations found:"
-            echo "$PENDING"
-            echo "Applying migrations..."
-            dotnet ef database update --project Syllabus.Infrastructure --startup-project SyllabusAPI --context SyllabusDbContext
-          else
-            echo "No pending migrations. Skipping database update."
-          fi
+      - name: Apply EF Core migrations
+        run: dotnet ef database update --project Syllabus.Infrastructure --startup-project SyllabusAPI --context SyllabusDbContext
         env:
           ConnectionStrings__DefaultConnection: "Server=${{ secrets.SQL_SERVER }};Database=${{ secrets.SQL_DATABASE }};User Id=${{ secrets.SQL_USER }};Password=${{ secrets.SQL_PASSWORD }};Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;"
