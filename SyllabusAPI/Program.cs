@@ -23,9 +23,9 @@ builder.Configuration
     .AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true)
     .AddEnvironmentVariables();
 
-var jwtOptions = new JwtOptions();
-builder.Configuration.GetSection(JwtOptions.SectionName).Bind(jwtOptions);
-var jwtKey = Encoding.UTF8.GetBytes(jwtOptions.Key ?? throw new InvalidOperationException("JWT Key not found"));
+//var jwtOptions = new JwtOptions();
+//builder.Configuration.GetSection(JwtOptions.SectionName).Bind(jwtOptions);
+//var jwtKey = Encoding.UTF8.GetBytes(jwtOptions.Key ?? throw new InvalidOperationException("JWT Key not found"));
 
 //builder.Services.AddAuthentication(options =>
 //{
