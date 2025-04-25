@@ -1,4 +1,4 @@
-name: Build, Push, Deploy to Azure Container App, and Apply Migrations
+name: Build, Push, and Apply Migrations to Azure SQL
 
 on:
   push:
@@ -9,14 +9,14 @@ on:
       - 'v*.*.*'  # Semantic versioning tags like v1.0.0
 
 permissions:
-  contents: read
+  contents: read  # id-token is NOT needed here since we use Service Principal
 
 env:
   ACR_LOGIN_SERVER: syllabusregistry.azurecr.io
   ACR_REPOSITORY: syllabusapi
 
 jobs:
-  build-push-deploy-migrate:
+  build-push-migrate:
     runs-on: ubuntu-latest
 
     steps:
@@ -67,13 +67,6 @@ jobs:
             ${{ env.ACR_LOGIN_SERVER }}/${{ env.ACR_REPOSITORY }}:${{ steps.get_tag.outputs.version }}
             ${{ env.ACR_LOGIN_SERVER }}/${{ env.ACR_REPOSITORY }}:latest
 
-      - name: Deploy to Azure Container App
-        run: |
-          az containerapp update \
-            --name ${{ secrets.AZURE_CONTAINERAPP_NAME }} \
-            --resource-group ${{ secrets.AZURE_RESOURCE_GROUP }} \
-            --image ${{ env.ACR_LOGIN_SERVER }}/${{ env.ACR_REPOSITORY }}:${{ steps.get_tag.outputs.version }}
-
       - name: Setup .NET
         uses: actions/setup-dotnet@v4
         with:
@@ -94,6 +87,8 @@ jobs:
           curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
           sudo apt-get update
           sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 unixodbc-dev
+          echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
+          echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> $GITHUB_PATH
 
       - name: Wait for SQL database to be ready
         run: |
