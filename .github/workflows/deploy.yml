@@ -92,7 +92,7 @@ jobs:
         run: |
           echo "Checking SQL database availability and actual state..."
           for i in {1..10}; do
-            STATE=$(/opt/mssql-tools18/bin/sqlcmd -S ${{ secrets.SQL_SERVER }} -U ${{ secrets.SQL_USER }} -P ${{ secrets.SQL_PASSWORD }} -d master -h -1 -Q "SELECT state_desc FROM sys.databases WHERE name = '${{ secrets.SQL_DATABASE }}'" | tr -d '[:space:]')
+            STATE=$(/opt/mssql-tools18/bin/sqlcmd -S ${{ secrets.SQL_SERVER }} -U ${{ secrets.SQL_USER }} -P ${{ secrets.SQL_PASSWORD }} -d master -h -1 -W -Q "SET NOCOUNT ON; SELECT state_desc FROM sys.databases WHERE name = '${{ secrets.SQL_DATABASE }}'" | tr -d '[:space:]')
             echo "Current database state: $STATE"
             if [[ "$STATE" == "ONLINE" ]]; then
               echo "✅ Database is ONLINE and ready!"
