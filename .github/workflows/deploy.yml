@@ -1,4 +1,4 @@
-﻿name: Build, Push, and Apply Migrations to Azure SQL
+name: Build, Push, and Apply Migrations to Azure SQL
 
 on:
   push:
@@ -87,14 +87,12 @@ jobs:
           curl https://packages.microsoft.com/config/ubuntu/22.04/prod.list | sudo tee /etc/apt/sources.list.d/mssql-release.list
           sudo apt-get update
           sudo ACCEPT_EULA=Y apt-get install -y msodbcsql18 mssql-tools18 unixodbc-dev
-          echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> ~/.bashrc
-          echo 'export PATH="$PATH:/opt/mssql-tools18/bin"' >> $GITHUB_PATH
 
       - name: Wait for SQL database to be ready
         run: |
           echo "Checking SQL database availability..."
           for i in {1..10}; do
-            if sqlcmd -S ${{ secrets.SQL_SERVER }} -U ${{ secrets.SQL_USER }} -P ${{ secrets.SQL_PASSWORD }} -d master -Q "SELECT 1" ; then
+            if /opt/mssql-tools18/bin/sqlcmd -S ${{ secrets.SQL_SERVER }} -U ${{ secrets.SQL_USER }} -P ${{ secrets.SQL_PASSWORD }} -d master -Q "SELECT 1" ; then
               echo "✅ SQL database is ready!"
               break
             else
@@ -114,3 +112,4 @@ jobs:
 
       - name: Confirm migration success
         run: echo "✅ Database migration applied successfully!"
+        
