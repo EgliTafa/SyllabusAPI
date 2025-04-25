@@ -90,17 +90,19 @@ jobs:
 
       - name: Wait for SQL database to be ready
         run: |
-          echo "Checking SQL database availability..."
+          echo "Checking SQL database availability and actual state..."
           for i in {1..10}; do
-            if /opt/mssql-tools18/bin/sqlcmd -S ${{ secrets.SQL_SERVER }} -U ${{ secrets.SQL_USER }} -P ${{ secrets.SQL_PASSWORD }} -d master -Q "SELECT 1" ; then
-              echo "✅ SQL database is ready!"
+            STATE=$(/opt/mssql-tools18/bin/sqlcmd -S ${{ secrets.SQL_SERVER }} -U ${{ secrets.SQL_USER }} -P ${{ secrets.SQL_PASSWORD }} -d master -h -1 -Q "SELECT state_desc FROM sys.databases WHERE name = '${{ secrets.SQL_DATABASE }}'" | tr -d '[:space:]')
+            echo "Current database state: $STATE"
+            if [[ "$STATE" == "ONLINE" ]]; then
+              echo "✅ Database is ONLINE and ready!"
               break
             else
-              echo "❌ SQL database not ready yet. Retrying in 15 seconds..."
+              echo "❌ Database state is '$STATE'. Retrying in 15 seconds..."
               sleep 15
             fi
             if [[ $i -eq 10 ]]; then
-              echo "❌ Database did not become available after 10 attempts. Failing the job."
+              echo "❌ Database did not become ONLINE after 10 attempts. Failing the job."
               exit 1
             fi
           done
@@ -112,4 +114,3 @@ jobs:
 
       - name: Confirm migration success
         run: echo "✅ Database migration applied successfully!"
-        
