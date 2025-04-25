@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Syllabus.Application;
+using Syllabus.Authentication;
 using Syllabus.Domain.Users;
 using Syllabus.Infrastructure;
 using Syllabus.Infrastructure.Data;
@@ -26,29 +27,31 @@ var jwtOptions = new JwtOptions();
 builder.Configuration.GetSection(JwtOptions.SectionName).Bind(jwtOptions);
 var jwtKey = Encoding.UTF8.GetBytes(jwtOptions.Key ?? throw new InvalidOperationException("JWT Key not found"));
 
-builder.Services.AddAuthentication(options =>
-{
-    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
-    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
-})
-.AddJwtBearer(options =>
-{
-    options.RequireHttpsMetadata = false;
-    options.SaveToken = true;
-    options.TokenValidationParameters = new TokenValidationParameters
-    {
-        ValidateIssuerSigningKey = true,
-        IssuerSigningKey = new SymmetricSecurityKey(jwtKey),
-        ValidateIssuer = true,
-        ValidateAudience = true,
-        ValidIssuer = jwtOptions.Issuer,
-        ValidAudience = jwtOptions.Audience,
-        NameClaimType = ClaimTypes.NameIdentifier
-    };
-});
+//builder.Services.AddAuthentication(options =>
+//{
+//    options.DefaultAuthenticateScheme = JwtBearerDefaults.AuthenticationScheme;
+//    options.DefaultChallengeScheme = JwtBearerDefaults.AuthenticationScheme;
+//})
+//.AddJwtBearer(options =>
+//{
+//    options.RequireHttpsMetadata = false;
+//    options.SaveToken = true;
+//    options.TokenValidationParameters = new TokenValidationParameters
+//    {
+//        ValidateIssuerSigningKey = true,
+//        IssuerSigningKey = new SymmetricSecurityKey(jwtKey),
+//        ValidateIssuer = true,
+//        ValidateAudience = true,
+//        ValidIssuer = jwtOptions.Issuer,
+//        ValidAudience = jwtOptions.Audience,
+//        NameClaimType = ClaimTypes.NameIdentifier
+//    };
+//});
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.AddSyllabusAuthentication(builder.Configuration);
+
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
 {
