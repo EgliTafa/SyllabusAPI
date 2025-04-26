@@ -7,6 +7,9 @@
     <UserSecretsId>06494155-ba0c-4a04-b022-1fc2c27e0ba5</UserSecretsId>
     <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
     <DockerComposeProjectPath>..\docker-compose.dcproj</DockerComposeProjectPath>
+
+	  <GenerateDocumentationFile>true</GenerateDocumentationFile>
+	  <NoWarn>$(NoWarn);1591</NoWarn>
   </PropertyGroup>
 
   <ItemGroup>
@@ -17,6 +20,7 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Azure.Containers.Tools.Targets" Version="1.21.0" />
+    <PackageReference Include="Swashbuckle.AspNetCore.Filters" Version="8.0.2" />
     <PackageReference Include="Swashbuckle.AspNetCore.Swagger" Version="8.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerGen" Version="8.1.1" />
     <PackageReference Include="Swashbuckle.AspNetCore.SwaggerUI" Version="8.1.1" />
