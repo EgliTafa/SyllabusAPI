@@ -2,11 +2,13 @@ using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
+using Swashbuckle.AspNetCore.Filters;
 using Syllabus.Application;
 using Syllabus.Domain.Users;
 using Syllabus.Infrastructure;
 using Syllabus.Infrastructure.Data;
 using Syllabus.Util.Options;
+using System.Reflection;
 using System.Security.Claims;
 using System.Text;
 
@@ -67,6 +69,12 @@ builder.Services.AddSwaggerGen(c =>
         Description = "API documentation for the Syllabus project"
     });
 
+    var xmlFile = $"{Assembly.GetExecutingAssembly().GetName().Name}.xml";
+    var xmlPath = Path.Combine(AppContext.BaseDirectory, xmlFile);
+    c.IncludeXmlComments(xmlPath);
+
+    c.ExampleFilters();
+
     c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
     {
         Description = "Enter JWT as: Bearer {your_token}",
@@ -91,6 +99,8 @@ builder.Services.AddSwaggerGen(c =>
         }
     });
 });
+
+builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();
 
 var app = builder.Build();
 

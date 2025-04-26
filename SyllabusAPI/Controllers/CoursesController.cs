@@ -11,23 +11,41 @@ using SyllabusApplication.Courses.Queries;
 
 namespace SyllabusAPI.Controllers
 {
-    public class CoursesController : Controller
+    /// <summary>
+    /// Manages course-related operations including creation, retrieval, update, and deletion of courses.
+    /// </summary>
+    [ApiController]
+    [Route("api/[controller]")]
+    public class CoursesController : ControllerBase
     {
         private readonly ISender _mediator;
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="CoursesController"/> class.
+        /// </summary>
+        /// <param name="mediator">The MediatR sender for dispatching commands and queries.</param>
         public CoursesController(ISender mediator)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        /// <summary>
+        /// Retrieves the list of all courses.
+        /// </summary>
+        /// <param name="request">Optional query parameters for filtering or pagination.</param>
+        /// <returns>A list of all available courses.</returns>
         [HttpGet("courses")]
         public async Task<IActionResult> ListAllCourses([FromQuery] ListAllCoursesRequestApiDTO request)
         {
             var result = await _mediator.Send(new ListAllCoursesQuery(request));
             return result.ToActionResult(this);
-
         }
 
+        /// <summary>
+        /// Retrieves details of a specific course by its ID.
+        /// </summary>
+        /// <param name="courseId">The ID of the course to retrieve.</param>
+        /// <returns>The course details if found.</returns>
         [HttpGet("courses/{courseId:int}")]
         public async Task<IActionResult> GetCourseById([FromRoute] int courseId)
         {
@@ -36,6 +54,11 @@ namespace SyllabusAPI.Controllers
             return result.ToActionResult(this);
         }
 
+        /// <summary>
+        /// Creates a new course.
+        /// </summary>
+        /// <param name="request">The course creation request payload.</param>
+        /// <returns>The result of the creation operation.</returns>
         [HttpPost("courses")]
         public async Task<IActionResult> CreateCourse([FromBody] CreateCourseRequestApiDTO request)
         {
@@ -43,15 +66,29 @@ namespace SyllabusAPI.Controllers
             return result.ToActionResult(this);
         }
 
+        /// <summary>
+        /// Deletes a course by its ID.
+        /// </summary>
+        /// <param name="courseId">The ID of the course to delete.</param>
+        /// <returns>No content if the deletion was successful.</returns>
         [HttpDelete("courses/{courseId:int}")]
         public async Task<IActionResult> DeleteCourse([FromRoute] int courseId)
         {
-            var request = new DeleteCourseRequestApiDTO { CourseId = courseId };
-            var result = await _mediator.Send(new DeleteCourseCommand(request));
+            var request = new DeleteCourseRequestApiDTO 
+            { 
+                CourseId = courseId 
+            };
 
+            var result = await _mediator.Send(new DeleteCourseCommand(request));
             return result.ToNoContentResult(this);
         }
 
+        /// <summary>
+        /// Updates an existing course by its ID.
+        /// </summary>
+        /// <param name="courseId">The ID of the course to update (from URL).</param>
+        /// <param name="request">The update request payload containing the new values.</param>
+        /// <returns>The result of the update operation.</returns>
         [HttpPut("courses/{courseId:int}")]
         public async Task<IActionResult> UpdateCourse(int courseId, [FromBody] UpdateCourseRequestApiDTO request)
         {
@@ -63,6 +100,5 @@ namespace SyllabusAPI.Controllers
             var result = await _mediator.Send(new UpdateCourseCommand(request));
             return result.ToActionResult(this);
         }
-
     }
 }
