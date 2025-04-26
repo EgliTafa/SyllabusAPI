@@ -10,15 +10,29 @@ using SyllabusApplication.Syllabuses.Commands;
 
 namespace SyllabusAPI.Controllers
 {
-    public class SyllabusController : Controller
+    /// <summary>
+    /// Handles syllabus-related operations like create, list, delete, and update.
+    /// </summary>
+    [ApiController]
+    [Route("api/[controller]")]
+    public class SyllabusController : ControllerBase
     {
         private readonly ISender _mediator;
 
+        /// <summary>
+        /// Constructor for SyllabusController.
+        /// </summary>
+        /// <param name="mediator">MediatR sender for dispatching commands and queries.</param>
         public SyllabusController(ISender mediator)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
+        /// <summary>
+        /// Lists all syllabuses.
+        /// </summary>
+        /// <param name="request">Filter and pagination parameters.</param>
+        /// <returns>List of syllabuses.</returns>
         [HttpGet("syllabuses")]
         public async Task<IActionResult> ListAllSyllabuses([FromQuery] ListAllSyllabusesRequestApiDTO request)
         {
@@ -26,6 +40,11 @@ namespace SyllabusAPI.Controllers
             return result.ToActionResult(this);
         }
 
+        /// <summary>
+        /// Retrieves a syllabus by its ID.
+        /// </summary>
+        /// <param name="syllabusId">The ID of the syllabus to retrieve.</param>
+        /// <returns>The requested syllabus if found.</returns>
         [HttpGet("syllabuses/{syllabusId:int}")]
         public async Task<IActionResult> GetSyllabusById([FromRoute] int syllabusId)
         {
@@ -34,6 +53,11 @@ namespace SyllabusAPI.Controllers
             return result.ToActionResult(this);
         }
 
+        /// <summary>
+        /// Creates a new syllabus.
+        /// </summary>
+        /// <param name="request">The syllabus creation request payload.</param>
+        /// <returns>Result of the creation operation.</returns>
         [HttpPost("syllabuses")]
         public async Task<IActionResult> CreateSyllabus([FromBody] CreateSyllabusRequestApiDTO request)
         {
@@ -41,7 +65,12 @@ namespace SyllabusAPI.Controllers
             return result.ToActionResult(this);
         }
 
-        [HttpDelete("{syllabusId:int}")]
+        /// <summary>
+        /// Deletes a syllabus by its ID.
+        /// </summary>
+        /// <param name="syllabusId">The ID of the syllabus to delete.</param>
+        /// <returns>No content if deletion was successful.</returns>
+        [HttpDelete("syllabuses/{syllabusId:int}")]
         public async Task<IActionResult> DeleteSyllabus([FromRoute] int syllabusId)
         {
             var request = new DeleteSyllabusRequestApiDTO { SyllabusId = syllabusId };
@@ -49,6 +78,12 @@ namespace SyllabusAPI.Controllers
             return result.ToNoContentResult(this);
         }
 
+        /// <summary>
+        /// Updates the name of an existing syllabus.
+        /// </summary>
+        /// <param name="syllabusId">The ID of the syllabus to update.</param>
+        /// <param name="request">The update payload with the new name.</param>
+        /// <returns>Result of the update operation.</returns>
         [HttpPut("syllabuses/{syllabusId:int}")]
         public async Task<IActionResult> RenameSyllabus([FromRoute] int syllabusId, [FromBody] UpdateSyllabusRequestApiDTO request)
         {
@@ -61,6 +96,12 @@ namespace SyllabusAPI.Controllers
             return result.ToActionResult(this);
         }
 
+        /// <summary>
+        /// Adds or removes courses from a syllabus.
+        /// </summary>
+        /// <param name="syllabusId">The ID of the syllabus.</param>
+        /// <param name="request">List of course IDs to add or remove.</param>
+        /// <returns>Result of the operation.</returns>
         [HttpPut("syllabuses/{syllabusId:int}/courses")]
         public async Task<IActionResult> AddOrRemoveCoursesFromSyllabus([FromRoute] int syllabusId, [FromBody] AddOrRemoveCoursesFromSyllabusRequestApiDTO request)
         {
@@ -72,6 +113,5 @@ namespace SyllabusAPI.Controllers
             var result = await _mediator.Send(new AddOrRemoveCoursesFromSyllabusCommand(request));
             return result.ToActionResult(this);
         }
-
     }
 }

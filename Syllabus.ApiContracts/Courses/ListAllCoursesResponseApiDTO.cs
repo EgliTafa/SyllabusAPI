@@ -1,7 +1,13 @@
 ﻿namespace Syllabus.ApiContracts.Courses
 {
+    /// <summary>
+    /// Response model containing a list of all courses.
+    /// </summary>
     public class ListAllCoursesResponseApiDTO
     {
-        public List<CourseResponseApiDTO> AllCourses { get; set; } = new List<CourseResponseApiDTO>();
+        /// <summary>
+        /// The list of all courses.
+        /// </summary>
+        public List<CourseResponseApiDTO> AllCourses { get; set; } = new();
     }
 }
