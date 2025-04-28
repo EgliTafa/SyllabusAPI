@@ -69,15 +69,14 @@ namespace SyllabusAPI.Controllers
         /// <summary>
         /// Deletes a course by its ID.
         /// </summary>
-        /// <param name="courseId">The ID of the course to delete.</param>
         /// <returns>No content if the deletion was successful.</returns>
         [HttpDelete("courses/{courseId:int}")]
-        public async Task<IActionResult> DeleteCourse([FromRoute] int courseId)
+        public async Task<IActionResult> DeleteCourse([FromBody] DeleteCourseRequestApiDTO request)
         {
-            var request = new DeleteCourseRequestApiDTO 
-            { 
-                CourseId = courseId 
-            };
+            if (request.CourseId != request.CourseId)
+            {
+                return BadRequest("Course ID in URL and payload do not match.");
+            }
 
             var result = await _mediator.Send(new DeleteCourseCommand(request));
             return result.ToNoContentResult(this);

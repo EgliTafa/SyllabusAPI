@@ -1,6 +1,7 @@
 ﻿using MediatR;
 using Microsoft.AspNetCore.Mvc;
 using Syllabus.ApiContracts.Authentication;
+using Syllabus.Application.Authentication.ForgetAndReset;
 using Syllabus.Application.Authentication.Login;
 using Syllabus.Application.Authentication.Register;
 using SyllabusAPI.Helpers;
@@ -51,6 +52,21 @@ namespace SyllabusAPI.Controllers
         public async Task<IActionResult> Login([FromBody] LoginRequestApiDTO request)
         {
             var command = new LoginUserCommand(request);
+            var result = await _mediator.Send(command);
+            return result.ToActionResult(this);
+        }
+
+        /// <summary>
+        /// Sends a password reset email to the user if the email is registered.
+        /// </summary>
+        /// <param name="request">The forgot password request containing the user's email.</param>
+        /// <returns>A success message if the process completes; otherwise, returns validation error details.</returns>
+        /// <response code="200">Password reset email sent if user exists.</response>
+        /// <response code="400">Invalid email address or format.</response>
+        [HttpPost("forgot-password")]
+        public async Task<IActionResult> ForgotPassword([FromBody] ForgotPasswordApiDTO request)
+        {
+            var command = new ForgotPasswordCommand(request);
             var result = await _mediator.Send(command);
             return result.ToActionResult(this);
         }

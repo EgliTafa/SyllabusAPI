@@ -1,6 +1,4 @@
-using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
-using Microsoft.IdentityModel.Tokens;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Syllabus.Application;
@@ -8,10 +6,7 @@ using Syllabus.Authentication;
 using Syllabus.Domain.Users;
 using Syllabus.Infrastructure;
 using Syllabus.Infrastructure.Data;
-using Syllabus.Util.Options;
 using System.Reflection;
-using System.Security.Claims;
-using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
 

@@ -1,8 +1,10 @@
-﻿using ErrorOr;
+﻿using System.IO.Pipelines;
+using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Syllabus.ApiContracts.Authentication;
 using Syllabus.Domain.Authentication;
+using Syllabus.Domain.Services.Email;
 using Syllabus.Domain.Users;
 
 namespace Syllabus.Application.Authentication.Register
@@ -13,23 +15,23 @@ namespace Syllabus.Application.Authentication.Register
     {
         private readonly UserManager<UserEntity> _userManager;
         private readonly IJwtTokenGenerator _jwtTokenGenerator;
+        private readonly IBrevoEmailService _emailService;
 
-        public RegisterUserCommandHandler(
-            UserManager<UserEntity> userManager,
-            IJwtTokenGenerator jwtTokenGenerator)
+
+        public RegisterUserCommandHandler(UserManager<UserEntity> userManager, IJwtTokenGenerator jwtTokenGenerator, IBrevoEmailService emailService)
         {
-            _userManager = userManager;
-            _jwtTokenGenerator = jwtTokenGenerator;
+            _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _jwtTokenGenerator = jwtTokenGenerator ?? throw new ArgumentNullException(nameof(jwtTokenGenerator));
+            _emailService = emailService ?? throw new ArgumentNullException(nameof(emailService));
         }
 
         public async Task<ErrorOr<RegisterUserResponseApiDTO>> Handle(RegisterUserCommand command, CancellationToken cancellationToken)
         {
             var request = command.Request;
-
             var existingUser = await _userManager.FindByEmailAsync(request.Email);
             if (existingUser != null)
             {
-                return Error.Conflict(description: $"User with email {request.Email} already exists.");
+                return Error.Conflict("User with this email already exists.");
             }
 
             var user = new UserEntity
@@ -50,7 +52,16 @@ namespace Syllabus.Application.Authentication.Register
             var result = await _userManager.CreateAsync(user, request.Password);
             if (!result.Succeeded)
             {
-                return Error.Validation(description: string.Join("; ", result.Errors.Select(e => e.Description)));
+                return Error.Validation(string.Join("; ", result.Errors.Select(e => e.Description)));
+            }
+
+            var emailConfirmationToken = await _userManager.GenerateEmailConfirmationTokenAsync(user);
+
+            var sendEmailResult = await _emailService.SendEmailConfirmationAsync(user.Email!, emailConfirmationToken);
+
+            if (!sendEmailResult)
+            {
+                return Error.Failure("Failed to send email confirmation.");
             }
 
             var token = _jwtTokenGenerator.GenerateToken(user);
