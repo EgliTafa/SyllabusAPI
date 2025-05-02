@@ -9,7 +9,7 @@ namespace Syllabus.Application.Authentication.ForgetAndReset
 {
     public record ForgotPasswordCommand(ForgotPasswordApiDTO Request) : IRequest<ErrorOr<ForgotPasswordResponseApiDTO>>;
 
-    public class ForgotPasswordCommandHandler
+    public class ForgotPasswordCommandHandler : IRequestHandler<ForgotPasswordCommand, ErrorOr<ForgotPasswordResponseApiDTO>>
     {
         private readonly UserManager<UserEntity> _userManager;
         private readonly IBrevoEmailService _emailService;

@@ -15,19 +15,17 @@ namespace Syllabus.Infrastructure
     {
         public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            // Bind connection string from config
-            var connectionOptions = new ConnectionStringOptions();
-            var emailOptions = new EmailOptions();
-            configuration.GetSection(ConnectionStringOptions.SectionName).Bind(connectionOptions);
-            configuration.GetSection(EmailOptions.SectionName).Bind(emailOptions);
+            services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
+            services.Configure<ConnectionStringOptions>(configuration.GetSection(ConnectionStringOptions.SectionName));
 
-            if (string.IsNullOrWhiteSpace(connectionOptions.DefaultConnection))
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new ArgumentNullException(nameof(connectionOptions.DefaultConnection), "Database connection string is missing.");
+                throw new ArgumentNullException("DefaultConnection", "Database connection string is missing.");
             }
 
             services.AddDbContext<SyllabusDbContext>(options =>
-                options.UseSqlServer(connectionOptions.DefaultConnection));
+                options.UseSqlServer(connectionString));
 
             services.AddScoped<ISyllabusRepository, SyllabusRepository>();
             services.AddScoped<ICourseRepository, CourseRepository>();
