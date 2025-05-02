@@ -1,9 +1,11 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Syllabus.Domain.Services.Email;
 using Syllabus.Domain.Sylabusses;
 using Syllabus.Infrastructure.Data;
 using Syllabus.Infrastructure.Repositories;
+using Syllabus.Infrastructure.Services.Email;
 using Syllabus.Util.Options;
 
 
@@ -13,20 +15,21 @@ namespace Syllabus.Infrastructure
     {
         public static void AddInfrastructureServices(this IServiceCollection services, IConfiguration configuration)
         {
-            // Bind connection string from config
-            var connectionOptions = new ConnectionStringOptions();
-            configuration.GetSection(ConnectionStringOptions.SectionName).Bind(connectionOptions);
+            services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
+            services.Configure<ConnectionStringOptions>(configuration.GetSection(ConnectionStringOptions.SectionName));
 
-            if (string.IsNullOrWhiteSpace(connectionOptions.DefaultConnection))
+            var connectionString = configuration.GetConnectionString("DefaultConnection");
+            if (string.IsNullOrWhiteSpace(connectionString))
             {
-                throw new ArgumentNullException(nameof(connectionOptions.DefaultConnection), "Database connection string is missing.");
+                throw new ArgumentNullException("DefaultConnection", "Database connection string is missing.");
             }
 
             services.AddDbContext<SyllabusDbContext>(options =>
-                options.UseSqlServer(connectionOptions.DefaultConnection));
+                options.UseSqlServer(connectionString));
 
             services.AddScoped<ISyllabusRepository, SyllabusRepository>();
             services.AddScoped<ICourseRepository, CourseRepository>();
+            services.AddScoped<IBrevoEmailService, BrevoEmailService>();
         }
     }
 }

@@ -34,5 +34,23 @@ namespace SyllabusAPI.Helpers
                 )
             );
         }
+
+        public static IActionResult ToProblemResult<T>(this ErrorOr<T> result, ControllerBase controller)
+        {
+            if (result.IsError)
+            {
+                var error = result.Errors.FirstOrDefault();
+                return controller.Problem(
+                    detail: error.Description,
+                    statusCode: error.Type switch
+                    {
+                        ErrorType.NotFound => StatusCodes.Status404NotFound,
+                        _ => StatusCodes.Status400BadRequest
+                    }
+                );
+            }
+
+            return controller.BadRequest("ToProblemResult was called on a successful result.");
+        }
     }
 }

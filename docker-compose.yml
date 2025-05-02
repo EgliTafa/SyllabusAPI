@@ -1,4 +1,4 @@
-version: '3.9'
+﻿version: '3.9'
 
 services:
   syllabusapi:
@@ -7,14 +7,14 @@ services:
       context: .
       dockerfile: SyllabusAPI/Dockerfile
     ports:
-      - "8080:80"   # exposed API port
+      - "8080:80"             # localhost:8080 → container :80
     volumes:
-      - ./SyllabusAPI:/app
+      - ./SyllabusAPI:/app    # hot‑reload while coding
+    environment:
+      ASPNETCORE_ENVIRONMENT: Development
     networks:
       - syllabus-net
-    environment:
-      - ASPNETCORE_ENVIRONMENT=Development
-      - ConnectionStrings__Default=Server=host.docker.internal;Database=SyllabusManagmentDb;User Id=sql_user;Password=1234;
 
 networks:
   syllabus-net:
+    driver: bridge
