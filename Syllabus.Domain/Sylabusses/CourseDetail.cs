@@ -26,6 +26,9 @@
         public string Prerequisites { get; set; }
         public string SkillsAcquired { get; set; }
 
+        // Pergjegjesi i lëndës
+        public string? CourseResponsible { get; set; }
+
         public ICollection<Topic>? Topics { get; set; } = new List<Topic>();
     }
 

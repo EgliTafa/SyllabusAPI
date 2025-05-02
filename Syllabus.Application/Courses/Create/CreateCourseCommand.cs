@@ -40,6 +40,38 @@ namespace Syllabus.Application.Courses.Create
                 Type = request.Request.Type
             };
 
+            if (request.Request.Detail is not null)
+            {
+                course.Detail = new CourseDetail
+                {
+                    AcademicProgram = request.Request.Detail.AcademicProgram,
+                    AcademicYear = request.Request.Detail.AcademicYear,
+                    Language = request.Request.Detail.Language,
+                    CourseTypeLabel = request.Request.Detail.CourseTypeLabel,
+                    EthicsCode = request.Request.Detail.EthicsCode,
+                    ExamMethod = request.Request.Detail.ExamMethod,
+                    TeachingFormat = request.Request.Detail.TeachingFormat,
+                    Credits = request.Request.Detail.Credits,
+                    TeachingPlan = request.Request.Detail.TeachingPlan,
+                    EvaluationBreakdown = request.Request.Detail.EvaluationBreakdown,
+                    Objective = request.Request.Detail.Objective,
+                    KeyConcepts = request.Request.Detail.KeyConcepts,
+                    Prerequisites = request.Request.Detail.Prerequisites,
+                    SkillsAcquired = request.Request.Detail.SkillsAcquired,
+                    CourseResponsible = request.Request.Detail.CourseResponsible
+                };
+
+                if (request.Request.Detail.Topics is not null)
+                {
+                    course.Detail.Topics = request.Request.Detail.Topics.Select(t => new Topic
+                    {
+                        Title = t.Title,
+                        Hours = t.Hours,
+                        Reference = t.Reference
+                    }).ToList();
+                }
+            }
+
             syllabus.Courses.Add(course);
             await _courseRepository.AddAsync(course);
             await _courseRepository.SaveChangesAsync();
@@ -51,8 +83,8 @@ namespace Syllabus.Application.Courses.Create
                 Code = course.Code,
                 Semester = course.Semester,
                 Credits = course.Credits,
-                Topics = new(),
-                DetailObjective = null
+                DetailObjective = course.Detail?.Objective,
+                Topics = course.Detail?.Topics?.Select(t => t.Title).ToList() ?? new()
             };
         }
     }
