@@ -56,5 +56,10 @@ namespace Syllabus.ApiContracts.Courses
         /// The ID of the syllabus to which this course belongs.
         /// </summary>
         public int SyllabusId { get; set; }
+
+        /// <summary>
+        /// Optional course details to be created along with the course.
+        /// </summary>
+        public CourseDetailRequestApiDTO? Detail { get; set; }
     }
 }
