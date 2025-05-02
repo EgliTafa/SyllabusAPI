@@ -70,5 +70,20 @@ namespace SyllabusAPI.Controllers
             var result = await _mediator.Send(command);
             return result.ToActionResult(this);
         }
+
+        /// <summary>
+        /// Resets the user's password using the token provided in the reset email.
+        /// </summary>
+        /// <param name="request">The reset password request containing the user's email, reset token, and new password.</param>
+        /// <returns>A success message if password reset is successful; otherwise, returns validation errors.</returns>
+        /// <response code="200">Password reset successful.</response>
+        /// <response code="400">Invalid email, token, or password.</response>
+        [HttpPost("reset-password")]
+        public async Task<IActionResult> ResetPassword([FromBody] ResetPasswordApiDTO request)
+        {
+            var command = new ResetPasswordCommand(request);
+            var result = await _mediator.Send(command);
+            return result.ToActionResult(this);
+        }
     }
 }
