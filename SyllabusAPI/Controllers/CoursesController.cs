@@ -3,10 +3,12 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Syllabus.ApiContracts.Courses;
+using Syllabus.Application.Courses.AddDetail;
 using Syllabus.Application.Courses.Create;
 using Syllabus.Application.Courses.Delete;
 using Syllabus.Application.Courses.GetById;
 using Syllabus.Application.Courses.Update;
+using Syllabus.Application.Courses.UpdateDetail;
 using SyllabusAPI.Helpers;
 using SyllabusApplication.Courses.Queries;
 
@@ -99,6 +101,32 @@ namespace SyllabusAPI.Controllers
             }
 
             var result = await _mediator.Send(new UpdateCourseCommand(request));
+            return result.ToActionResult(this);
+        }
+
+        /// <summary>
+        /// Adds details to an existing course.
+        /// </summary>
+        /// <param name="courseId">The ID of the course to add details to.</param>
+        /// <param name="request">The course details to add.</param>
+        /// <returns>The updated course with its new details.</returns>
+        [HttpPost("{courseId:int}/details")]
+        public async Task<IActionResult> AddCourseDetails(int courseId, [FromBody] CourseDetailRequestApiDTO request)
+        {
+            var result = await _mediator.Send(new AddCourseDetailCommand(courseId, request));
+            return result.ToActionResult(this);
+        }
+
+        /// <summary>
+        /// Updates the details of an existing course.
+        /// </summary>
+        /// <param name="courseId">The ID of the course whose details to update.</param>
+        /// <param name="request">The updated course details.</param>
+        /// <returns>The updated course with its modified details.</returns>
+        [HttpPut("{courseId:int}/details")]
+        public async Task<IActionResult> UpdateCourseDetails(int courseId, [FromBody] CourseDetailRequestApiDTO request)
+        {
+            var result = await _mediator.Send(new UpdateCourseDetailCommand(courseId, request));
             return result.ToActionResult(this);
         }
     }
