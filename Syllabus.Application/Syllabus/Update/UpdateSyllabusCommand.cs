@@ -39,8 +39,13 @@ public class UpdateSyllabusCommandHandler : IRequestHandler<UpdateSyllabusComman
                 Code = c.Code,
                 Semester = c.Semester,
                 Credits = c.Credits,
-                DetailObjective = c.Detail?.Objective,
-                Topics = c.Detail?.Topics?.Select(t => t.Title).ToList() ?? new()
+                Objective = c.Detail?.Objective,
+                Topics = c.Detail?.Topics?.Select(t => new TopicResponseApiDTO
+                {
+                    Title = t.Title,
+                    Hours = t.Hours,
+                    Reference = t.Reference
+                }).ToList()
             }).ToList()
         };
     }

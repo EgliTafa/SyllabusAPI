@@ -65,8 +65,13 @@ namespace Syllabus.Application.Courses.UpdateDetail
                 Code = course.Code,
                 Semester = course.Semester,
                 Credits = course.Credits,
-                DetailObjective = course.Detail.Objective,
-                Topics = course.Detail.Topics?.Select(t => t.Title).ToList() ?? new()
+                Objective = course.Detail.Objective,
+                Topics = course.Detail.Topics?.Select(t => new TopicResponseApiDTO
+                {
+                    Title = t.Title,
+                    Hours = t.Hours,
+                    Reference = t.Reference
+                }).ToList()
             };
         }
     }

@@ -17,19 +17,50 @@ namespace Syllabus.Infrastructure.Data.Configuration
 
             builder.HasKey(cd => cd.Id);
 
-            builder.Property(cd => cd.AcademicProgram).HasMaxLength(200).IsRequired();
-            builder.Property(cd => cd.AcademicYear).HasMaxLength(50).IsRequired();
-            builder.Property(cd => cd.Language).HasMaxLength(50).IsRequired();
-            builder.Property(cd => cd.CourseTypeLabel).HasMaxLength(100);
-            builder.Property(cd => cd.EthicsCode).HasMaxLength(500);
-            builder.Property(cd => cd.ExamMethod).HasMaxLength(100);
-            builder.Property(cd => cd.TeachingFormat).HasMaxLength(100);
-            builder.Property(cd => cd.Credits).IsRequired();
+            builder.Property(cd => cd.AcademicProgram)
+                .IsRequired()
+                .HasMaxLength(255);
 
-            builder.Property(cd => cd.Objective).HasColumnType("nvarchar(max)");
-            builder.Property(cd => cd.KeyConcepts).HasColumnType("nvarchar(max)");
-            builder.Property(cd => cd.Prerequisites).HasColumnType("nvarchar(max)");
-            builder.Property(cd => cd.SkillsAcquired).HasColumnType("nvarchar(max)");
+            builder.Property(cd => cd.AcademicYear)
+                .IsRequired()
+                .HasMaxLength(20);
+
+            builder.Property(cd => cd.Language)
+                .IsRequired()
+                .HasMaxLength(50);
+
+            builder.Property(cd => cd.CourseTypeLabel)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(cd => cd.EthicsCode)
+                .IsRequired();
+
+            builder.Property(cd => cd.ExamMethod)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(cd => cd.TeachingFormat)
+                .IsRequired()
+                .HasMaxLength(100);
+
+            builder.Property(cd => cd.Credits)
+                .IsRequired();
+
+            builder.Property(cd => cd.Objective)
+                .IsRequired();
+
+            builder.Property(cd => cd.KeyConcepts)
+                .IsRequired();
+
+            builder.Property(cd => cd.Prerequisites)
+                .IsRequired();
+
+            builder.Property(cd => cd.SkillsAcquired)
+                .IsRequired();
+
+            builder.Property(cd => cd.CourseResponsible)
+                .HasMaxLength(255);
 
             builder.HasOne(cd => cd.Course)
                    .WithOne(c => c.Detail)
@@ -38,21 +69,21 @@ namespace Syllabus.Infrastructure.Data.Configuration
 
             builder.OwnsOne(cd => cd.TeachingPlan, tp =>
             {
-                tp.Property(t => t.LectureHours).HasColumnName("LectureHours");
-                tp.Property(t => t.LabHours).HasColumnName("LabHours");
-                tp.Property(t => t.PracticeHours).HasColumnName("PracticeHours");
-                tp.Property(t => t.ExerciseHours).HasColumnName("ExerciseHours");
-                tp.Property(t => t.WeeklyHours).HasColumnName("WeeklyHours");
-                tp.Property(t => t.IndividualStudyHours).HasColumnName("IndividualStudyHours");
+                tp.Property(t => t.LectureHours).IsRequired();
+                tp.Property(t => t.LabHours).IsRequired();
+                tp.Property(t => t.PracticeHours).IsRequired();
+                tp.Property(t => t.ExerciseHours).IsRequired();
+                tp.Property(t => t.WeeklyHours).IsRequired();
+                tp.Property(t => t.IndividualStudyHours).IsRequired();
             });
 
             builder.OwnsOne(cd => cd.EvaluationBreakdown, eb =>
             {
-                eb.Property(e => e.ParticipationPercent).HasColumnName("Participation");
-                eb.Property(e => e.Test1Percent).HasColumnName("Test1");
-                eb.Property(e => e.Test2Percent).HasColumnName("Test2");
-                eb.Property(e => e.Test3Percent).HasColumnName("Test3");
-                eb.Property(e => e.FinalExamPercent).HasColumnName("FinalExam");
+                eb.Property(e => e.ParticipationPercent).IsRequired();
+                eb.Property(e => e.Test1Percent).IsRequired();
+                eb.Property(e => e.Test2Percent).IsRequired();
+                eb.Property(e => e.Test3Percent).IsRequired();
+                eb.Property(e => e.FinalExamPercent).IsRequired();
             });
 
             builder.HasMany(cd => cd.Topics)

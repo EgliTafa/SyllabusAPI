@@ -21,16 +21,16 @@ namespace Syllabus.Infrastructure.Repositories
         public async ValueTask<List<Course>> GetAllAsync()
         {
             return await _context.Courses
-                .Include(c => c.Detail!)
-                    .ThenInclude(d => d.Topics)
+                .Include(c => c.Detail)
+                    .ThenInclude(d => d!.Topics)
                 .ToListAsync();
         }
 
         public async ValueTask<Course?> GetByIdAsync(int id)
         {
             return await _context.Courses
-                .Include(c => c.Detail!)
-                    .ThenInclude(d => d.Topics)
+                .Include(c => c.Detail)
+                    .ThenInclude(d => d!.Topics)
                 .FirstOrDefaultAsync(c => c.Id == id);
         }
 
@@ -75,8 +75,8 @@ namespace Syllabus.Infrastructure.Repositories
         public async ValueTask<List<Course>> GetByIdsAsync(IEnumerable<int> ids)
         {
             return await _context.Courses
-                .Include(c => c.Detail!)
-                    .ThenInclude(d => d.Topics)
+                .Include(c => c.Detail)
+                    .ThenInclude(d => d!.Topics)
                 .Where(c => ids.Contains(c.Id))
                 .ToListAsync();
         }
