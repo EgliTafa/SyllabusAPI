@@ -38,7 +38,27 @@ namespace Syllabus.Application.Syllabus.List
                         Title = c.Title,
                         Code = c.Code,
                         Semester = c.Semester,
-                        Credits = c.Credits
+                        Credits = c.Credits,
+                        AcademicProgram = c.Detail?.AcademicProgram,
+                        AcademicYear = c.Detail?.AcademicYear,
+                        Language = c.Detail?.Language,
+                        CourseTypeLabel = c.Detail?.CourseTypeLabel,
+                        EthicsCode = c.Detail?.EthicsCode,
+                        ExamMethod = c.Detail?.ExamMethod,
+                        TeachingFormat = c.Detail?.TeachingFormat,
+                        TeachingPlan = c.Detail?.TeachingPlan,
+                        EvaluationBreakdown = c.Detail?.EvaluationBreakdown,
+                        Objective = c.Detail?.Objective,
+                        KeyConcepts = c.Detail?.KeyConcepts,
+                        Prerequisites = c.Detail?.Prerequisites,
+                        SkillsAcquired = c.Detail?.SkillsAcquired,
+                        CourseResponsible = c.Detail?.CourseResponsible,
+                        Topics = c.Detail?.Topics?.Select(t => new TopicResponseApiDTO
+                        {
+                            Title = t.Title,
+                            Hours = t.Hours,
+                            Reference = t.Reference
+                        }).ToList()
                     }).ToList()
                 }).ToList()
             };

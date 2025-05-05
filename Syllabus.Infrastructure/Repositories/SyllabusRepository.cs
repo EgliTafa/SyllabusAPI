@@ -21,6 +21,8 @@ namespace Syllabus.Infrastructure.Repositories
         {
             return await _context.Syllabuses
                 .Include(s => s.Courses)
+                    .ThenInclude(c => c.Detail)
+                        .ThenInclude(d => d!.Topics)
                 .ToListAsync();
         }
 
@@ -28,6 +30,8 @@ namespace Syllabus.Infrastructure.Repositories
         {
             return await _context.Syllabuses
                 .Include(s => s.Courses)
+                    .ThenInclude(c => c.Detail)
+                        .ThenInclude(d => d!.Topics)
                 .FirstOrDefaultAsync(s => s.Id == id);
         }
 

@@ -34,7 +34,31 @@ namespace Syllabus.Application.Syllabus.Create
                 LabHours = c.LabHours,
                 Credits = c.Credits,
                 Evaluation = c.Evaluation,
-                Type = c.Type
+                Type = c.Type,
+                Detail = c.Detail == null ? null : new CourseDetail
+                {
+                    AcademicProgram = c.Detail.AcademicProgram,
+                    AcademicYear = c.Detail.AcademicYear,
+                    Language = c.Detail.Language,
+                    CourseTypeLabel = c.Detail.CourseTypeLabel,
+                    EthicsCode = c.Detail.EthicsCode,
+                    ExamMethod = c.Detail.ExamMethod,
+                    TeachingFormat = c.Detail.TeachingFormat,
+                    Credits = c.Detail.Credits,
+                    TeachingPlan = c.Detail.TeachingPlan,
+                    EvaluationBreakdown = c.Detail.EvaluationBreakdown,
+                    Objective = c.Detail.Objective,
+                    KeyConcepts = c.Detail.KeyConcepts,
+                    Prerequisites = c.Detail.Prerequisites,
+                    SkillsAcquired = c.Detail.SkillsAcquired,
+                    CourseResponsible = c.Detail.CourseResponsible,
+                    Topics = c.Detail.Topics?.Select(t => new Topic
+                    {
+                        Title = t.Title,
+                        Hours = t.Hours,
+                        Reference = t.Reference
+                    }).ToList()
+                }
             }).ToList();
 
             foreach (var course in courses)
@@ -56,8 +80,26 @@ namespace Syllabus.Application.Syllabus.Create
                     Code = c.Code,
                     Semester = c.Semester,
                     Credits = c.Credits,
-                    Topics = new(),
-                    DetailObjective = null
+                    AcademicProgram = c.Detail?.AcademicProgram,
+                    AcademicYear = c.Detail?.AcademicYear,
+                    Language = c.Detail?.Language,
+                    CourseTypeLabel = c.Detail?.CourseTypeLabel,
+                    EthicsCode = c.Detail?.EthicsCode,
+                    ExamMethod = c.Detail?.ExamMethod,
+                    TeachingFormat = c.Detail?.TeachingFormat,
+                    TeachingPlan = c.Detail?.TeachingPlan,
+                    EvaluationBreakdown = c.Detail?.EvaluationBreakdown,
+                    Objective = c.Detail?.Objective,
+                    KeyConcepts = c.Detail?.KeyConcepts,
+                    Prerequisites = c.Detail?.Prerequisites,
+                    SkillsAcquired = c.Detail?.SkillsAcquired,
+                    CourseResponsible = c.Detail?.CourseResponsible,
+                    Topics = c.Detail?.Topics?.Select(t => new TopicResponseApiDTO
+                    {
+                        Title = t.Title,
+                        Hours = t.Hours,
+                        Reference = t.Reference
+                    }).ToList()
                 }).ToList()
             };
         }

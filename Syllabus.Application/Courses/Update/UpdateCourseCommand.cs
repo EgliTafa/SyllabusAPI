@@ -44,8 +44,26 @@ namespace Syllabus.Application.Courses.Update
                 Code = course.Code,
                 Semester = course.Semester,
                 Credits = course.Credits,
-                DetailObjective = course.Detail?.Objective,
-                Topics = course.Detail?.Topics?.Select(t => t.Title).ToList() ?? new()
+                AcademicProgram = course.Detail?.AcademicProgram,
+                AcademicYear = course.Detail?.AcademicYear,
+                Language = course.Detail?.Language,
+                CourseTypeLabel = course.Detail?.CourseTypeLabel,
+                EthicsCode = course.Detail?.EthicsCode,
+                ExamMethod = course.Detail?.ExamMethod,
+                TeachingFormat = course.Detail?.TeachingFormat,
+                TeachingPlan = course.Detail?.TeachingPlan,
+                EvaluationBreakdown = course.Detail?.EvaluationBreakdown,
+                Objective = course.Detail?.Objective,
+                KeyConcepts = course.Detail?.KeyConcepts,
+                Prerequisites = course.Detail?.Prerequisites,
+                SkillsAcquired = course.Detail?.SkillsAcquired,
+                CourseResponsible = course.Detail?.CourseResponsible,
+                Topics = course.Detail?.Topics?.Select(t => new TopicResponseApiDTO
+                {
+                    Title = t.Title,
+                    Hours = t.Hours,
+                    Reference = t.Reference
+                }).ToList()
             };
         }
     }
