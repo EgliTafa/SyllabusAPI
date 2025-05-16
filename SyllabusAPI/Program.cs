@@ -21,8 +21,20 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.AddSyllabusAuthentication(builder.Configuration);
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000") // Your React app's URL
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowCredentials();
+        });
+});
 
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
@@ -77,6 +89,13 @@ builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();
 
 var app = builder.Build();
 
+// Seed roles
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    await RoleSeeder.SeedRolesAsync(roleManager);
+}
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -94,6 +113,7 @@ if (!app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
 }
+app.UseCors("AllowReactApp");
 
 app.UseAuthentication();
 app.UseAuthorization();

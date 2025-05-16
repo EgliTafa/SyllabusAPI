@@ -64,7 +64,7 @@ namespace Syllabus.Application.Authentication.Register
                 return Error.Failure("Failed to send email confirmation.");
             }
 
-            var token = _jwtTokenGenerator.GenerateToken(user);
+            var token = await _jwtTokenGenerator.GenerateTokenAsync(user);
 
             return new RegisterUserResponseApiDTO
             {

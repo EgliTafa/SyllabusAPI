@@ -1,0 +1,13 @@
+{
+	"folders": [
+		{
+			"name": "syllabus-client",
+			"path": "../../../syllabus-client"
+		},
+		{
+			"name": "SyllabusAPI",
+			"path": ".."
+		}
+	],
+	"settings": {}
+}

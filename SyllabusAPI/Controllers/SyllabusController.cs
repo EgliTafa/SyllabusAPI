@@ -6,6 +6,7 @@ using Syllabus.Application.Syllabus.Create;
 using Syllabus.Application.Syllabus.Delete;
 using Syllabus.Application.Syllabus.GetById;
 using Syllabus.Application.Syllabus.List;
+using Syllabus.Domain.Users;
 using SyllabusAPI.Helpers;
 using SyllabusApplication.Syllabuses.Commands;
 
@@ -36,6 +37,7 @@ namespace SyllabusAPI.Controllers
         /// <param name="request">Filter and pagination parameters.</param>
         /// <returns>List of syllabuses.</returns>
         [HttpGet()]
+        [Authorize(Roles = nameof(UserRole.Student) + "," + nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
         public async Task<IActionResult> ListAllSyllabuses([FromQuery] ListAllSyllabusesRequestApiDTO request)
         {
             var result = await _mediator.Send(new ListAllSyllabusesQuery(request));
@@ -48,6 +50,7 @@ namespace SyllabusAPI.Controllers
         /// <param name="syllabusId">The ID of the syllabus to retrieve.</param>
         /// <returns>The requested syllabus if found.</returns>
         [HttpGet("{syllabusId:int}")]
+        [Authorize(Roles = nameof(UserRole.Student) + "," + nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
         public async Task<IActionResult> GetSyllabusById([FromRoute] int syllabusId)
         {
             var request = new GetSyllabusByIdRequestApiDTO { SyllabusId = syllabusId };
@@ -61,6 +64,7 @@ namespace SyllabusAPI.Controllers
         /// <param name="request">The syllabus creation request payload.</param>
         /// <returns>Result of the creation operation.</returns>
         [HttpPost()]
+        [Authorize(Roles = nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
         public async Task<IActionResult> CreateSyllabus([FromBody] CreateSyllabusRequestApiDTO request)
         {
             var result = await _mediator.Send(new CreateSyllabusCommand(request));
@@ -73,6 +77,7 @@ namespace SyllabusAPI.Controllers
         /// <param name="syllabusId">The ID of the syllabus to delete.</param>
         /// <returns>No content if deletion was successful.</returns>
         [HttpDelete("{syllabusId:int}")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> DeleteSyllabus([FromRoute] int syllabusId)
         {
             var request = new DeleteSyllabusRequestApiDTO { SyllabusId = syllabusId };
@@ -87,6 +92,7 @@ namespace SyllabusAPI.Controllers
         /// <param name="request">The update payload with the new name.</param>
         /// <returns>Result of the update operation.</returns>
         [HttpPut("{syllabusId:int}")]
+        [Authorize(Roles = nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
         public async Task<IActionResult> RenameSyllabus([FromRoute] int syllabusId, [FromBody] UpdateSyllabusRequestApiDTO request)
         {
             if (request.SyllabusId != syllabusId)
@@ -105,6 +111,7 @@ namespace SyllabusAPI.Controllers
         /// <param name="request">List of course IDs to add or remove.</param>
         /// <returns>Result of the operation.</returns>
         [HttpPut("{syllabusId:int}/courses")]
+        [Authorize(Roles = nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
         public async Task<IActionResult> AddOrRemoveCoursesFromSyllabus([FromRoute] int syllabusId, [FromBody] AddOrRemoveCoursesFromSyllabusRequestApiDTO request)
         {
             if (request.SyllabusId != syllabusId)
