@@ -1,15 +1,8 @@
 using Microsoft.AspNetCore.Identity;
+using Syllabus.Domain.Authentication;
 using Syllabus.Domain.Users;
 
 namespace Syllabus.Application.Services;
-
-public interface IRoleManagementService
-{
-    Task<bool> AssignRoleToUserAsync(string userId, UserRole role);
-    Task<bool> RemoveRoleFromUserAsync(string userId, UserRole role);
-    Task<IList<string>> GetUserRolesAsync(string userId);
-    Task<bool> IsUserInRoleAsync(string userId, UserRole role);
-}
 
 public class RoleManagementService : IRoleManagementService
 {
@@ -24,9 +17,7 @@ public class RoleManagementService : IRoleManagementService
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
-        {
             return false;
-        }
 
         var result = await _userManager.AddToRoleAsync(user, role.ToString());
         return result.Succeeded;
@@ -36,21 +27,17 @@ public class RoleManagementService : IRoleManagementService
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
-        {
             return false;
-        }
 
         var result = await _userManager.RemoveFromRoleAsync(user, role.ToString());
         return result.Succeeded;
     }
 
-    public async Task<IList<string>> GetUserRolesAsync(string userId)
+    public async Task<IEnumerable<string>> GetUserRolesAsync(string userId)
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
-        {
-            return new List<string>();
-        }
+            return Enumerable.Empty<string>();
 
         return await _userManager.GetRolesAsync(user);
     }
@@ -59,9 +46,7 @@ public class RoleManagementService : IRoleManagementService
     {
         var user = await _userManager.FindByIdAsync(userId);
         if (user == null)
-        {
             return false;
-        }
 
         return await _userManager.IsInRoleAsync(user, role.ToString());
     }

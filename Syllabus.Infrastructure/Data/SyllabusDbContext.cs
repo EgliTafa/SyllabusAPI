@@ -19,7 +19,7 @@ namespace Syllabus.Infrastructure.Data
         public virtual DbSet<Topic> CourseTopics { get; set; }
 
         // Expose the identity table
-        public virtual DbSet<UserEntity> Users { get; set; }
+        public new virtual DbSet<UserEntity> Users { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

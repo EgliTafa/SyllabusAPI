@@ -4,6 +4,7 @@ using Syllabus.Application.Services;
 using Syllabus.Domain.Users;
 using Microsoft.AspNetCore.Identity;
 using Syllabus.Infrastructure.Data;
+using Syllabus.Domain.Authentication;
 
 namespace SyllabusAPI.Controllers;
 

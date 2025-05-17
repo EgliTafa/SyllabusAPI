@@ -1,7 +1,8 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
-using System.Reflection;
 using Syllabus.Application.Services;
+using Syllabus.Domain.Authentication;
+using System.Reflection;
 
 namespace Syllabus.Application
 {

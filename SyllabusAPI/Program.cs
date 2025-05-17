@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Syllabus.Application;
+using Syllabus.Application.Services;
 using Syllabus.Authentication;
 using Syllabus.Domain.Users;
 using Syllabus.Infrastructure;
@@ -23,6 +24,7 @@ builder.Configuration
 builder.Services.AddInfrastructureServices(builder.Configuration);
 builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.AddSyllabusAuthentication(builder.Configuration);
+
 
 builder.Services.AddCors(options =>
 {
@@ -94,6 +96,17 @@ using (var scope = app.Services.CreateScope())
 {
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     await RoleSeeder.SeedRolesAsync(roleManager);
+
+    // Assign Administrator role to specific user
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
+    var user = await userManager.FindByEmailAsync("eglitafa008@gmail.com");
+    if (user != null)
+    {
+        if (!await userManager.IsInRoleAsync(user, UserRole.Administrator.ToString()))
+        {
+            await userManager.AddToRoleAsync(user, UserRole.Administrator.ToString());
+        }
+    }
 }
 
 app.UseSwagger();
