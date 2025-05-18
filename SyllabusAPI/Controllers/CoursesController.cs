@@ -9,6 +9,7 @@ using Syllabus.Application.Courses.Delete;
 using Syllabus.Application.Courses.GetById;
 using Syllabus.Application.Courses.Update;
 using Syllabus.Application.Courses.UpdateDetail;
+using Syllabus.Domain.Users;
 using SyllabusAPI.Helpers;
 using SyllabusApplication.Courses.Queries;
 
@@ -39,6 +40,7 @@ namespace SyllabusAPI.Controllers
         /// <param name="request">Optional query parameters for filtering or pagination.</param>
         /// <returns>A list of all available courses.</returns>
         [HttpGet()]
+        [Authorize(Roles = nameof(UserRole.Student) + "," + nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
         public async Task<IActionResult> ListAllCourses([FromQuery] ListAllCoursesRequestApiDTO request)
         {
             var result = await _mediator.Send(new ListAllCoursesQuery(request));
@@ -51,6 +53,7 @@ namespace SyllabusAPI.Controllers
         /// <param name="courseId">The ID of the course to retrieve.</param>
         /// <returns>The course details if found.</returns>
         [HttpGet("{courseId:int}")]
+        [Authorize(Roles = nameof(UserRole.Student) + "," + nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
         public async Task<IActionResult> GetCourseById([FromRoute] int courseId)
         {
             var request = new GetCourseByIdRequest { CourseId = courseId };
@@ -64,6 +67,7 @@ namespace SyllabusAPI.Controllers
         /// <param name="request">The course creation request payload.</param>
         /// <returns>The result of the creation operation.</returns>
         [HttpPost()]
+        [Authorize(Roles = nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
         public async Task<IActionResult> CreateCourse([FromBody] CreateCourseRequestApiDTO request)
         {
             var result = await _mediator.Send(new CreateCourseCommand(request));
@@ -75,6 +79,7 @@ namespace SyllabusAPI.Controllers
         /// </summary>
         /// <returns>No content if the deletion was successful.</returns>
         [HttpDelete("{courseId:int}")]
+        [Authorize(Roles = nameof(UserRole.Administrator))]
         public async Task<IActionResult> DeleteCourse([FromBody] DeleteCourseRequestApiDTO request)
         {
             if (request.CourseId != request.CourseId)
@@ -93,6 +98,7 @@ namespace SyllabusAPI.Controllers
         /// <param name="request">The update request payload containing the new values.</param>
         /// <returns>The result of the update operation.</returns>
         [HttpPut("{courseId:int}")]
+        [Authorize(Roles = nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
         public async Task<IActionResult> UpdateCourse(int courseId, [FromBody] UpdateCourseRequestApiDTO request)
         {
             if (request.CourseId != courseId)
@@ -111,6 +117,7 @@ namespace SyllabusAPI.Controllers
         /// <param name="request">The course details to add.</param>
         /// <returns>The updated course with its new details.</returns>
         [HttpPost("{courseId:int}/details")]
+        [Authorize(Roles = nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
         public async Task<IActionResult> AddCourseDetails(int courseId, [FromBody] CourseDetailRequestApiDTO request)
         {
             var result = await _mediator.Send(new AddCourseDetailCommand(courseId, request));
@@ -124,6 +131,7 @@ namespace SyllabusAPI.Controllers
         /// <param name="request">The updated course details.</param>
         /// <returns>The updated course with its modified details.</returns>
         [HttpPut("{courseId:int}/details")]
+        [Authorize(Roles = nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
         public async Task<IActionResult> UpdateCourseDetails(int courseId, [FromBody] CourseDetailRequestApiDTO request)
         {
             var result = await _mediator.Send(new UpdateCourseDetailCommand(courseId, request));

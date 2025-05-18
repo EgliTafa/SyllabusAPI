@@ -2,6 +2,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.OpenApi.Models;
 using Swashbuckle.AspNetCore.Filters;
 using Syllabus.Application;
+using Syllabus.Application.Services;
 using Syllabus.Authentication;
 using Syllabus.Domain.Users;
 using Syllabus.Infrastructure;
@@ -21,8 +22,21 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.AddApplicationServices(builder.Configuration);
+builder.Services.ConfigureApplicationServices(builder.Configuration);
 builder.Services.AddSyllabusAuthentication(builder.Configuration);
+
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy("AllowReactApp",
+        builder =>
+        {
+            builder.WithOrigins("http://localhost:3000") // Your React app's URL
+                   .AllowAnyMethod()
+                   .AllowAnyHeader()
+                   .AllowCredentials();
+        });
+});
 
 
 builder.WebHost.ConfigureKestrel(serverOptions =>
@@ -77,6 +91,24 @@ builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();
 
 var app = builder.Build();
 
+// Seed roles
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+    await RoleSeeder.SeedRolesAsync(roleManager);
+
+    // Assign Administrator role to specific user
+    var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
+    var user = await userManager.FindByEmailAsync("eglitafa008@gmail.com");
+    if (user != null)
+    {
+        if (!await userManager.IsInRoleAsync(user, UserRole.Administrator.ToString()))
+        {
+            await userManager.AddToRoleAsync(user, UserRole.Administrator.ToString());
+        }
+    }
+}
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -94,6 +126,7 @@ if (!app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
 }
+app.UseCors("AllowReactApp");
 
 app.UseAuthentication();
 app.UseAuthorization();

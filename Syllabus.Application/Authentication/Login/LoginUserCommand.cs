@@ -36,7 +36,7 @@ namespace Syllabus.Application.Authentication.Login
                 return Error.Unauthorized(description: "Invalid credentials.");
             }
 
-            var token = _jwtTokenGenerator.GenerateToken(user);
+            var token = await _jwtTokenGenerator.GenerateTokenAsync(user);
 
             return new LoginResponseApiDTO
             {

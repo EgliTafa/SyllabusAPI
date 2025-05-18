@@ -4,6 +4,6 @@ namespace Syllabus.Domain.Authentication
 {
     public interface IJwtTokenGenerator
     {
-        string GenerateToken(UserEntity user);
+        Task<string> GenerateTokenAsync(UserEntity user);
     }
 }
