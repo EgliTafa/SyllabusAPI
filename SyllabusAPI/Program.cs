@@ -31,7 +31,10 @@ builder.Services.AddCors(options =>
     options.AddPolicy("AllowReactApp",
         builder =>
         {
-            builder.WithOrigins("http://localhost:3000") // Your React app's URL
+            builder.WithOrigins(
+                "http://localhost:3000",
+                "https://syllabus-client-container.yellowfield-b94f6044.westus2.azurecontainerapps.io"
+            )
                    .AllowAnyMethod()
                    .AllowAnyHeader()
                    .AllowCredentials();
