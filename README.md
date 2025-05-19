@@ -138,10 +138,10 @@ All response models and sample request bodies are auto-documented.
 
 ## 📤 Coming Soon
 
-- 📄 DOCX and PDF generation using OpenXML + DinkToPDF
-- 🧾 File upload support (e.g., syllabus attachments)
-- 🧠 MediatR + CQRS for cleaner application layer
-- 🖼️ React-based frontend
+- 📄 DOCX and PDF generation using OpenXML + DinkToPDF  
+- 🧾 File upload support (e.g., syllabus attachments)  
+~~- 🧠 MediatR + CQRS for cleaner application layer~~ ✅  
+~~- 🖼️ React-based frontend~~ ✅
 
 ---
 
