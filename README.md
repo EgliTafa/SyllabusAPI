@@ -153,8 +153,7 @@ This is a university-driven academic tool. Contributions for syllabus formats fr
 
 ## 🧑‍💻 Author
 
-**E. T.** – Software Engineer & Academic Tools Enthusiast
-
+**E. T.** – Junior .NET & React Developer
 ---
 
 ## 📝 License
