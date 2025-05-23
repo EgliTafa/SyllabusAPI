@@ -115,7 +115,8 @@ using (var scope = app.Services.CreateScope())
             FirstName = "System",
             LastName = "Administrator",
             PhoneNumber = "+355123456789",
-            PhoneNumberConfirmed = true
+            PhoneNumberConfirmed = true,
+            ProfilePictureUrl = "https://ui-avatars.com/api/?name=System+Administrator&background=random" // Default avatar URL
         };
 
         var result = await userManager.CreateAsync(adminUser, "Admin@123!"); // This is a temporary password that should be changed immediately
