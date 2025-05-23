@@ -100,14 +100,33 @@ using (var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     await RoleSeeder.SeedRolesAsync(roleManager);
 
-    // Assign Administrator role to specific user
+    // Create admin user if it doesn't exist
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
-    var user = await userManager.FindByEmailAsync("eglitafa008@gmail.com");
-    if (user != null)
+    var adminEmail = "admin@syllabus.com";
+    var adminUser = await userManager.FindByEmailAsync(adminEmail);
+    
+    if (adminUser == null)
     {
-        if (!await userManager.IsInRoleAsync(user, UserRole.Administrator.ToString()))
+        adminUser = new UserEntity
         {
-            await userManager.AddToRoleAsync(user, UserRole.Administrator.ToString());
+            UserName = adminEmail,
+            Email = adminEmail,
+            EmailConfirmed = true,
+            FirstName = "System",
+            LastName = "Administrator",
+            PhoneNumber = "+355123456789",
+            PhoneNumberConfirmed = true
+        };
+
+        var result = await userManager.CreateAsync(adminUser, "Admin@123!"); // This is a temporary password that should be changed immediately
+        if (result.Succeeded)
+        {
+            await userManager.AddToRoleAsync(adminUser, UserRole.Administrator.ToString());
+            Console.WriteLine("Admin user created successfully");
+        }
+        else
+        {
+            Console.WriteLine("Failed to create admin user: " + string.Join(", ", result.Errors.Select(e => e.Description)));
         }
     }
 }
