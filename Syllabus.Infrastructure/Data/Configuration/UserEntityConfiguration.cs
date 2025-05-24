@@ -24,7 +24,8 @@ namespace Syllabus.Infrastructure.Data.Configuration
             builder.Property(e => e.EmailVerified);
 
             builder.Property(e => e.ProfilePictureUrl)
-                .HasMaxLength(500);
+                .HasMaxLength(500)
+                .IsRequired(false);
 
             builder.Property(e => e.Status)
                 .HasConversion<string>();

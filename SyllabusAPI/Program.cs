@@ -115,10 +115,16 @@ using (var scope = app.Services.CreateScope())
             FirstName = "System",
             LastName = "Administrator",
             PhoneNumber = "+355123456789",
-            PhoneNumberConfirmed = true
+            PhoneNumberConfirmed = true,
+            ProfilePictureUrl = string.Empty,
+            PhoneNumberInfo = new PhoneNumber
+            {
+                Prefix = "+355",
+                Number = "123456789"
+            }
         };
 
-        var result = await userManager.CreateAsync(adminUser, "Admin@123!"); // This is a temporary password that should be changed immediately
+        var result = await userManager.CreateAsync(adminUser, "Admin@123!");
         if (result.Succeeded)
         {
             await userManager.AddToRoleAsync(adminUser, UserRole.Administrator.ToString());
