@@ -1,10 +1,13 @@
 ﻿using MediatR;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Syllabus.ApiContracts.Authentication;
 using Syllabus.Application.Authentication.ForgetAndReset;
 using Syllabus.Application.Authentication.Login;
 using Syllabus.Application.Authentication.Register;
+using Syllabus.Application.Authentication.UpdateDetails;
 using SyllabusAPI.Helpers;
+using System.Security.Claims;
 
 namespace SyllabusAPI.Controllers
 {
@@ -29,7 +32,7 @@ namespace SyllabusAPI.Controllers
         /// <summary>
         /// Registers a new user into the system.
         /// </summary>
-        /// <param name="request">The registration request containing the user’s email, password, and other required information.</param>
+        /// <param name="request">The registration request containing the user's email, password, and other required information.</param>
         /// <returns>A success result if registration completes; otherwise, returns error details.</returns>
         /// <response code="200">User registered successfully.</response>
         /// <response code="400">Invalid request data or user already exists.</response>
@@ -84,6 +87,18 @@ namespace SyllabusAPI.Controllers
             var command = new ResetPasswordCommand(request);
             var result = await _mediator.Send(command);
             return result.ToActionResult(this);
+        }
+
+        [Authorize]
+        [HttpPut("profile")]
+        public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserDetailsApiDTO dto)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var result = await _mediator.Send(new UpdateUserDetailsCommand(userId, dto));
+            return result.Match(
+                value => Ok(value),
+                errors => Problem(errors)
+            );
         }
     }
 }
