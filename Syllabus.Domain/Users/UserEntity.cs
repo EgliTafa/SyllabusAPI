@@ -12,7 +12,7 @@ namespace Syllabus.Domain.Users
 
         public PhoneNumber PhoneNumberInfo { get; set; }
 
-        public string ProfilePictureUrl { get; set; }
+        public string? ProfilePictureUrl { get; set; }
 
         public UserStatus Status { get; set; } = UserStatus.Active;
     }
