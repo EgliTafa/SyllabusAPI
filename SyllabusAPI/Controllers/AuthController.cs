@@ -6,6 +6,7 @@ using Syllabus.Application.Authentication.ForgetAndReset;
 using Syllabus.Application.Authentication.Login;
 using Syllabus.Application.Authentication.Register;
 using Syllabus.Application.Authentication.UpdateDetails;
+using Syllabus.Application.Authentication.ChangePassword;
 using SyllabusAPI.Helpers;
 using System.Security.Claims;
 
@@ -89,16 +90,38 @@ namespace SyllabusAPI.Controllers
             return result.ToActionResult(this);
         }
 
+        /// <summary>
+        /// Updates the profile details of the currently authenticated user.
+        /// </summary>
+        /// <param name="dto">The update request containing new profile information such as first name, last name, or email.</param>
+        /// <returns>The updated user profile information if successful; otherwise, returns validation errors.</returns>
+        /// <response code="200">Profile updated successfully.</response>
+        /// <response code="400">Invalid request data or update failed due to validation errors.</response>
+        /// <response code="401">User is not authenticated.</response>
         [Authorize]
         [HttpPut("profile")]
         public async Task<IActionResult> UpdateProfile([FromBody] UpdateUserDetailsApiDTO dto)
         {
             var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
             var result = await _mediator.Send(new UpdateUserDetailsCommand(userId, dto));
-            return result.Match(
-                value => Ok(value),
-                errors => Problem(errors)
-            );
+            return result.ToActionResult(this);
+        }
+
+
+        /// <summary>
+        /// Changes the password for the currently authenticated user.
+        /// </summary>
+        /// <param name="request">The change password request containing current and new password information.</param>
+        /// <returns>A success result if password change completes; otherwise, returns error details.</returns>
+        /// <response code="200">Password changed successfully.</response>
+        /// <response code="400">Invalid request data or current password is incorrect.</response>
+        /// <response code="401">User is not authenticated.</response>
+        [Authorize]
+        [HttpPost("change-password")]
+        public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordRequestApiDTO request)
+        {
+            var result = await _mediator.Send(new ChangePasswordCommand(request));
+            return result.ToActionResult(this);
         }
     }
 }
