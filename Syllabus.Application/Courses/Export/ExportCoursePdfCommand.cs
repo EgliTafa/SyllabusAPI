@@ -33,7 +33,7 @@ namespace Syllabus.Application.Courses.Export
 
             return new ExportSyllabusPdfResponseApiDTO
             {
-                FileName = $"Course_{course.Id}.pdf",
+                FileName = $"{course.Title}.pdf",
                 ContentType = "application/pdf",
                 FileBytes = pdfBytes
             };

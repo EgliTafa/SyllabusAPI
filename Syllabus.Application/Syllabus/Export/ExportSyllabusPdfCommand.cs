@@ -35,7 +35,7 @@ namespace Syllabus.Application.Syllabus.Export
 
             return new ExportSyllabusPdfResponseApiDTO
             {
-                FileName = $"Syllabus_{syllabus.Id}.pdf",
+                FileName = $"{syllabus.Name}.pdf",
                 ContentType = "application/pdf",
                 FileBytes = pdfBytes
             };
