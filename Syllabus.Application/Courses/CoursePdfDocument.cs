@@ -1,14 +1,13 @@
-﻿using QuestPDF.Fluent;
+using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Syllabus.Domain.Sylabusses;
-using System.Linq;
 
-namespace Syllabus.Application.Syllabus
+namespace Syllabus.Application.Courses
 {
-    public class SyllabusPdfDocument : IDocument
+    public class CoursePdfDocument : IDocument
     {
-        private readonly Sylabus _syllabus;
+        private readonly Course _course;
         private readonly string _logoPath;
 
         // Static info for footer and header
@@ -19,9 +18,9 @@ namespace Syllabus.Application.Syllabus
         private const string DepartmentHead = "Prof. Alda Kika";
         private const string CourseResponsible = "Julian Fejzaj";
 
-        public SyllabusPdfDocument(Sylabus syllabus, string logoPath)
+        public CoursePdfDocument(Course course, string logoPath)
         {
-            _syllabus = syllabus ?? throw new ArgumentNullException(nameof(syllabus));
+            _course = course ?? throw new ArgumentNullException(nameof(course));
             _logoPath = logoPath ?? throw new ArgumentNullException(nameof(logoPath));
         }
 
@@ -40,25 +39,17 @@ namespace Syllabus.Application.Syllabus
 
         private void BuildDocument(IContainer container)
         {
+            var detail = _course.Detail;
             container.Column(col =>
             {
-                // Header (once at the top)
+                // Header
                 col.Item().Element(HeaderSection);
-                // For each course in the syllabus
-                bool first = true;
-                foreach (var course in _syllabus.Courses)
-                {
-                    var detail = course.Detail;
-                    if (!first) col.Item().PageBreak();
-                    first = false;
-                    col.Item().PaddingTop(10).Element(c => CourseTitleSection(c, course));
-                    col.Item().PaddingTop(10).Element(c => TeachingActivityTable(c, course, detail));
-                    col.Item().PaddingTop(10).Element(c => EvaluationSection(c, detail));
-                    col.Item().PaddingTop(10).Element(c => ObjectivesSection(c, detail));
-                    col.Item().PaddingTop(10).Element(c => TopicsSection(c, detail));
-                    col.Item().PaddingTop(10).Element(LiteratureSection);
-                }
-                // Footer (once at the end)
+                col.Item().PaddingTop(10).Element(c => CourseTitleSection(c, _course));
+                col.Item().PaddingTop(10).Element(c => TeachingActivityTable(c, _course, detail));
+                col.Item().PaddingTop(10).Element(c => EvaluationSection(c, detail));
+                col.Item().PaddingTop(10).Element(c => ObjectivesSection(c, detail));
+                col.Item().PaddingTop(10).Element(c => TopicsSection(c, detail));
+                col.Item().PaddingTop(10).Element(LiteratureSection);
                 col.Item().PaddingTop(20).Element(FooterSection);
             });
         }
@@ -216,4 +207,4 @@ namespace Syllabus.Application.Syllabus
         private IContainer CellStyleHeader(IContainer container) =>
             container.Background(Colors.Grey.Lighten2).Border(1).Padding(2).AlignCenter();
     }
-}
+} 
