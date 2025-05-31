@@ -5,7 +5,6 @@ using Syllabus.Domain.Sylabusses;
 
 namespace Syllabus.Application.Syllabus
 {
-
     public class SyllabusPdfDocument : IDocument
     {
         private readonly Sylabus _syllabus;
@@ -14,7 +13,7 @@ namespace Syllabus.Application.Syllabus
         public SyllabusPdfDocument(Sylabus syllabus, string logoPath)
         {
             _syllabus = syllabus ?? throw new ArgumentNullException(nameof(syllabus));
-            _logoPath = logoPath;
+            _logoPath = logoPath ?? throw new ArgumentNullException(nameof(logoPath));
         }
 
         public DocumentMetadata GetMetadata() => DocumentMetadata.Default;
@@ -42,99 +41,105 @@ namespace Syllabus.Application.Syllabus
                     col.Item().Text($"Programi: {_syllabus.Name}").FontSize(12);
                 });
 
-                row.ConstantItem(70).Image(Image.FromFile(_logoPath)).FitArea();
+                row.ConstantItem(70)
+                   .Image(Image.FromFile(_logoPath))
+                   .FitArea();
             });
         }
 
         private void Content(IContainer container)
         {
-            foreach (var course in _syllabus.Courses)
+            container.Column(col =>
             {
-                var detail = course.Detail;
-                if (detail == null) continue;
+                foreach (var course in _syllabus.Courses)
+                {
+                    var detail = course.Detail;
+                    if (detail == null) continue;
 
-                container
-                    .PaddingTop(20)
-                    .Column(col =>
-                    {
-                        col.Item().Text($"{course.Code} - {course.Title}").Bold().FontSize(13);
-
-                        col.Item().Text($"Akademik: {detail.AcademicYear}, Program: {detail.AcademicProgram}");
-                        col.Item().Text($"Gjuha: {detail.Language}  | Kredite: {detail.Credits} | Tipologjia: {detail.CourseTypeLabel}");
-                        col.Item().Text($"Mënyra e provimit: {detail.ExamMethod} - {detail.TeachingFormat}");
-
-                        col.Item().PaddingTop(10).Text("Orë Mësimore").Bold();
-                        col.Item().Table(table =>
-                        {
-                            table.ColumnsDefinition(columns =>
+                    col.Item().Element(courseContainer =>
+                        courseContainer
+                            .PaddingTop(20)
+                            .Column(c =>
                             {
-                                columns.RelativeColumn();
-                                columns.ConstantColumn(50);
-                            });
+                                c.Item().Text($"{course.Code} - {course.Title}").Bold().FontSize(13);
+                                c.Item().Text($"Akademik: {detail.AcademicYear}, Program: {detail.AcademicProgram}");
+                                c.Item().Text($"Gjuha: {detail.Language}  | Kredite: {detail.Credits} | Tipologjia: {detail.CourseTypeLabel}");
+                                c.Item().Text($"Mënyra e provimit: {detail.ExamMethod} - {detail.TeachingFormat}");
 
-                            table.Cell().Text("Leksione"); table.Cell().Text(course.LectureHours.ToString());
-                            table.Cell().Text("Seminar"); table.Cell().Text(course.SeminarHours.ToString());
-                            table.Cell().Text("Laborator"); table.Cell().Text(course.LabHours.ToString());
-                            table.Cell().Text("Totali"); table.Cell().Text(course.TotalHours.ToString());
-                        });
+                                c.Item().PaddingTop(10).Text("Orë Mësimore").Bold();
+                                c.Item().Table(table =>
+                                {
+                                    table.ColumnsDefinition(columns =>
+                                    {
+                                        columns.RelativeColumn();
+                                        columns.ConstantColumn(50);
+                                    });
 
-                        col.Item().PaddingTop(10).Text("Vlerësimi").Bold();
-                        col.Item().Table(table =>
-                        {
-                            table.ColumnsDefinition(columns =>
-                            {
-                                columns.RelativeColumn();
-                                columns.ConstantColumn(50);
-                            });
+                                    table.Cell().Text("Leksione"); table.Cell().Text(course.LectureHours.ToString());
+                                    table.Cell().Text("Seminar"); table.Cell().Text(course.SeminarHours.ToString());
+                                    table.Cell().Text("Laborator"); table.Cell().Text(course.LabHours.ToString());
+                                    table.Cell().Text("Totali"); table.Cell().Text(course.TotalHours.ToString());
+                                });
 
-                            table.Cell().Text("Pjesëmarrje"); table.Cell().Text($"{detail.EvaluationBreakdown.ParticipationPercent}%");
-                            table.Cell().Text("Test 1"); table.Cell().Text($"{detail.EvaluationBreakdown.Test1Percent}%");
-                            table.Cell().Text("Test 2"); table.Cell().Text($"{detail.EvaluationBreakdown.Test2Percent}%");
-                            table.Cell().Text("Provimi Final"); table.Cell().Text($"{detail.EvaluationBreakdown.FinalExamPercent}%");
-                            table.Cell().Text("Total"); table.Cell().Text("100%");
-                        });
+                                c.Item().PaddingTop(10).Text("Vlerësimi").Bold();
+                                c.Item().Table(table =>
+                                {
+                                    table.ColumnsDefinition(columns =>
+                                    {
+                                        columns.RelativeColumn();
+                                        columns.ConstantColumn(50);
+                                    });
 
-                        col.Item().PaddingTop(10).Text("Përshkrimi dhe Objektivat").Bold();
-                        col.Item().Text(detail.Objective);
-                        col.Item().PaddingTop(5).Text("Njohuri Paraprake").Bold();
-                        col.Item().Text(detail.Prerequisites);
-                        col.Item().PaddingTop(5).Text("Aftësitë e Fitura").Bold();
-                        col.Item().Text(detail.SkillsAcquired);
+                                    table.Cell().Text("Pjesëmarrje"); table.Cell().Text($"{detail.EvaluationBreakdown.ParticipationPercent}%");
+                                    table.Cell().Text("Test 1"); table.Cell().Text($"{detail.EvaluationBreakdown.Test1Percent}%");
+                                    table.Cell().Text("Test 2"); table.Cell().Text($"{detail.EvaluationBreakdown.Test2Percent}%");
+                                    table.Cell().Text("Provimi Final"); table.Cell().Text($"{detail.EvaluationBreakdown.FinalExamPercent}%");
+                                    table.Cell().Text("Total"); table.Cell().Text("100%");
+                                });
 
-                        col.Item().PaddingTop(10).Text("Temat").Bold();
-                        col.Item().Table(table =>
-                        {
-                            table.ColumnsDefinition(columns =>
-                            {
-                                columns.ConstantColumn(30);
-                                columns.RelativeColumn();
-                                columns.RelativeColumn();
-                            });
+                                c.Item().PaddingTop(10).Text("Përshkrimi dhe Objektivat").Bold();
+                                c.Item().Text(detail.Objective);
+                                c.Item().PaddingTop(5).Text("Njohuri Paraprake").Bold();
+                                c.Item().Text(detail.Prerequisites);
+                                c.Item().PaddingTop(5).Text("Aftësitë e Fitura").Bold();
+                                c.Item().Text(detail.SkillsAcquired);
 
-                            table.Header(header =>
-                            {
-                                header.Cell().Text("Nr.").Bold();
-                                header.Cell().Text("Titulli").Bold();
-                                header.Cell().Text("Referenca").Bold();
-                            });
+                                c.Item().PaddingTop(10).Text("Temat").Bold();
+                                c.Item().Table(table =>
+                                {
+                                    table.ColumnsDefinition(columns =>
+                                    {
+                                        columns.ConstantColumn(30);
+                                        columns.RelativeColumn();
+                                        columns.RelativeColumn();
+                                    });
 
-                            int i = 1;
-                            foreach (var topic in detail.Topics ?? Enumerable.Empty<Topic>())
-                            {
-                                table.Cell().Text(i++.ToString());
-                                table.Cell().Text(topic.Title);
-                                table.Cell().Text(topic.Reference ?? "-");
-                            }
-                        });
+                                    table.Header(header =>
+                                    {
+                                        header.Cell().Text("Nr.").Bold();
+                                        header.Cell().Text("Titulli").Bold();
+                                        header.Cell().Text("Referenca").Bold();
+                                    });
 
-                        if (!string.IsNullOrWhiteSpace(detail.CourseResponsible))
-                        {
-                            col.Item().PaddingTop(20).AlignRight().Text($"Përgjegjës i lëndës: {detail.CourseResponsible}");
-                        }
+                                    int i = 1;
+                                    foreach (var topic in detail.Topics ?? Enumerable.Empty<Topic>())
+                                    {
+                                        table.Cell().Text(i++.ToString());
+                                        table.Cell().Text(topic.Title);
+                                        table.Cell().Text(topic.Reference ?? "-");
+                                    }
+                                });
 
-                        col.Item().PageBreak(); // Separate each course
-                    });
-            }
+                                if (!string.IsNullOrWhiteSpace(detail.CourseResponsible))
+                                {
+                                    c.Item().PaddingTop(20).AlignRight().Text($"Përgjegjës i lëndës: {detail.CourseResponsible}");
+                                }
+
+                                c.Item().PageBreak();
+                            })
+                    );
+                }
+            });
         }
     }
 }
