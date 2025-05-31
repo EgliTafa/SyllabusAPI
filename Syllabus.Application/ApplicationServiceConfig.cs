@@ -1,7 +1,9 @@
 ﻿using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using QuestPDF.Infrastructure;
 using Syllabus.Application.Services;
 using Syllabus.Domain.Authentication;
+using Syllabus.Util.Options;
 using System.Reflection;
 
 namespace Syllabus.Application
@@ -14,6 +16,10 @@ namespace Syllabus.Application
                 cfg.RegisterServicesFromAssembly(Assembly.GetExecutingAssembly()));
 
             services.AddScoped<IRoleManagementService, RoleManagementService>();
+
+            QuestPDF.Settings.License = LicenseType.Community;
+
+            services.Configure<StaticFilesOptions>(configuration.GetSection("StaticFiles"));
         }
     }
 }
