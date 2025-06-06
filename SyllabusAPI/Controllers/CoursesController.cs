@@ -137,5 +137,20 @@ namespace SyllabusAPI.Controllers
             var result = await _mediator.Send(new UpdateCourseDetailCommand(courseId, request));
             return result.ToActionResult(this);
         }
+
+        /// <summary>
+        /// Exports a single course as a PDF document.
+        /// </summary>
+        /// <param name="courseId">The ID of the course to export.</param>
+        /// <returns>PDF file of the course.</returns>
+        [HttpGet("{courseId:int}/export-pdf")]
+        [Authorize(Roles = nameof(UserRole.Student) + "," + nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
+        public async Task<IActionResult> ExportCoursePdf([FromRoute] int courseId)
+        {
+            var result = await _mediator.Send(new Syllabus.Application.Courses.Export.ExportCoursePdfCommand(courseId));
+            if (result.IsError)
+                return result.ToActionResult(this);
+            return File(result.Value.FileBytes, result.Value.ContentType, result.Value.FileName);
+        }
     }
 }

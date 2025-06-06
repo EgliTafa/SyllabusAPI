@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Syllabus.ApiContracts.Syllabus;
 using Syllabus.Application.Syllabus.Create;
 using Syllabus.Application.Syllabus.Delete;
+using Syllabus.Application.Syllabus.Export;
 using Syllabus.Application.Syllabus.GetById;
 using Syllabus.Application.Syllabus.List;
 using Syllabus.Domain.Users;
@@ -121,6 +122,24 @@ namespace SyllabusAPI.Controllers
 
             var result = await _mediator.Send(new AddOrRemoveCoursesFromSyllabusCommand(request));
             return result.ToActionResult(this);
+        }
+
+        /// <summary>
+        /// Exports the syllabus as a PDF document.
+        /// </summary>
+        /// <param name="syllabusId">The ID of the syllabus to export.</param>
+        /// <returns>PDF file of the syllabus.</returns>
+        [HttpGet("{syllabusId:int}/export-pdf")]
+        [Authorize(Roles = nameof(UserRole.Student) + "," + nameof(UserRole.Professor) + "," + nameof(UserRole.Administrator))]
+        public async Task<IActionResult> ExportSyllabusPdf([FromRoute] int syllabusId)
+        {
+            var request = new ExportSyllabusPdfRequestApiDTO { SyllabusId = syllabusId };
+            var result = await _mediator.Send(new ExportSyllabusPdfCommand(request));
+
+            if (result.IsError)
+                return result.ToActionResult(this);
+
+            return File(result.Value.FileBytes, result.Value.ContentType, result.Value.FileName);
         }
     }
 }
