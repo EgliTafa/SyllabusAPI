@@ -21,7 +21,8 @@ namespace Syllabus.Application.Syllabus.Create
         {
             var syllabus = new Sylabus
             {
-                Name = request.Request.Name
+                Name = request.Request.Name,
+                AcademicYear = request.Request.AcademicYear
             };
 
             var courses = request.Request.Courses.Select(c => new Course
