@@ -26,12 +26,14 @@ public class UpdateSyllabusCommandHandler : IRequestHandler<UpdateSyllabusComman
         }
 
         syllabus.Name = request.Request.Name;
+        syllabus.AcademicYear = request.Request.AcademicYear;
         await _syllabusRepository.SaveChangesAsync();
 
         return new SyllabusResponseApiDTO
         {
             Id = syllabus.Id,
             Name = syllabus.Name,
+            AcademicYear = syllabus.AcademicYear,
             Courses = syllabus.Courses.Select(c => new CourseResponseApiDTO
             {
                 Id = c.Id,
@@ -39,7 +41,20 @@ public class UpdateSyllabusCommandHandler : IRequestHandler<UpdateSyllabusComman
                 Code = c.Code,
                 Semester = c.Semester,
                 Credits = c.Credits,
+                AcademicProgram = c.Detail?.AcademicProgram,
+                AcademicYear = c.Detail?.AcademicYear,
+                Language = c.Detail?.Language,
+                CourseTypeLabel = c.Detail?.CourseTypeLabel,
+                EthicsCode = c.Detail?.EthicsCode,
+                ExamMethod = c.Detail?.ExamMethod,
+                TeachingFormat = c.Detail?.TeachingFormat,
+                TeachingPlan = c.Detail?.TeachingPlan,
+                EvaluationBreakdown = c.Detail?.EvaluationBreakdown,
                 Objective = c.Detail?.Objective,
+                KeyConcepts = c.Detail?.KeyConcepts,
+                Prerequisites = c.Detail?.Prerequisites,
+                SkillsAcquired = c.Detail?.SkillsAcquired,
+                CourseResponsible = c.Detail?.CourseResponsible,
                 Topics = c.Detail?.Topics?.Select(t => new TopicResponseApiDTO
                 {
                     Title = t.Title,

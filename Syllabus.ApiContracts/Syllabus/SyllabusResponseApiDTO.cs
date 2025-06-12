@@ -18,6 +18,11 @@ namespace Syllabus.ApiContracts.Syllabus
         public string Name { get; set; } = default!;
 
         /// <summary>
+        /// The academic year for this syllabus (e.g., "2023-2024").
+        /// </summary>
+        public string AcademicYear { get; set; } = default!;
+
+        /// <summary>
         /// The list of courses in the syllabus.
         /// </summary>
         public List<CourseResponseApiDTO> Courses { get; set; } = new();

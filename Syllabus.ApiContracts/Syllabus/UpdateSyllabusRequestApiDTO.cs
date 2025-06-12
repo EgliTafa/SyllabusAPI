@@ -1,7 +1,7 @@
 ﻿namespace Syllabus.ApiContracts.Syllabus
 {
     /// <summary>
-    /// Request to update the name of a syllabus.
+    /// Request to update a syllabus.
     /// </summary>
     public class UpdateSyllabusRequestApiDTO
     {
@@ -11,8 +11,13 @@
         public int SyllabusId { get; set; }
 
         /// <summary>
-        /// The new name of the syllabus.
+        /// The new name for the syllabus.
         /// </summary>
-        public string Name { get; set; } = default!;
+        public string Name { get; set; } = string.Empty;
+
+        /// <summary>
+        /// The academic year for this syllabus (e.g., "2023-2024").
+        /// </summary>
+        public string AcademicYear { get; set; } = string.Empty;
     }
 }

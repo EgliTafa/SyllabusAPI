@@ -26,12 +26,13 @@ namespace Syllabus.Application.Syllabus.List
                 return Error.NotFound(description: "No syllabuses found.");
             }
 
-            var dto = new ListAllSyllabusesResponseApiDTO
+            return new ListAllSyllabusesResponseApiDTO
             {
                 Syllabuses = syllabuses.Select(s => new SyllabusResponseApiDTO
                 {
                     Id = s.Id,
                     Name = s.Name,
+                    AcademicYear = s.AcademicYear,
                     Courses = s.Courses.Select(c => new CourseResponseApiDTO
                     {
                         Id = c.Id,
@@ -62,8 +63,6 @@ namespace Syllabus.Application.Syllabus.List
                     }).ToList()
                 }).ToList()
             };
-
-            return dto;
         }
     }
 }

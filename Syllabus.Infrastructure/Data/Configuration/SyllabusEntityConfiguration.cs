@@ -16,6 +16,10 @@ namespace Syllabus.Infrastructure.Data.Configuration
                 .IsRequired()
                 .HasMaxLength(255);
 
+            builder.Property(s => s.AcademicYear)
+                .IsRequired()
+                .HasMaxLength(20);
+
             //one syllabus has many courses
             builder.HasMany(s => s.Courses)
                    .WithOne()
