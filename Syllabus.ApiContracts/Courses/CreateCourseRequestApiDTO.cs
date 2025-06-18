@@ -66,5 +66,10 @@ namespace Syllabus.ApiContracts.Courses
         /// The academic year (1, 2, or 3) in which the course is taught.
         /// </summary>
         public int Year { get; set; }
+
+        /// <summary>
+        /// The elective group for this course ('Elective I', 'Elective II', or null).
+        /// </summary>
+        public string? ElectiveGroup { get; set; }
     }
 }

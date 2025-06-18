@@ -111,5 +111,10 @@ namespace Syllabus.ApiContracts.Courses
         /// The list of topics covered in the course.
         /// </summary>
         public List<TopicResponseApiDTO>? Topics { get; set; }
+
+        /// <summary>
+        /// The elective group for this course ('Elective I', 'Elective II', or null).
+        /// </summary>
+        public string? ElectiveGroup { get; set; }
     }
 }
