@@ -61,5 +61,10 @@ namespace Syllabus.ApiContracts.Courses
         /// Optional course details to be created along with the course.
         /// </summary>
         public CourseDetailRequestApiDTO? Detail { get; set; }
+
+        /// <summary>
+        /// The academic year (1, 2, or 3) in which the course is taught.
+        /// </summary>
+        public int Year { get; set; }
     }
 }

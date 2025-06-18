@@ -38,9 +38,14 @@ namespace Syllabus.ApiContracts.Courses
         public string? AcademicProgram { get; set; }
 
         /// <summary>
-        /// The academic year for this course.
+        /// The academic year for this course (e.g., "2023-2024").
         /// </summary>
         public string? AcademicYear { get; set; }
+
+        /// <summary>
+        /// The academic year (1, 2, or 3) in which the course is taught.
+        /// </summary>
+        public int Year { get; set; }
 
         /// <summary>
         /// The language in which the course is taught.

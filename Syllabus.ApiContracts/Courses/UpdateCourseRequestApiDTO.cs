@@ -56,5 +56,10 @@ namespace Syllabus.ApiContracts.Courses
         /// The type of the course (e.g., Mandatory, Elective).
         /// </summary>
         public CourseType Type { get; set; }
+
+        /// <summary>
+        /// The academic year (1, 2, or 3) in which the course is taught.
+        /// </summary>
+        public int Year { get; set; }
     }
 }
