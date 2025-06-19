@@ -33,6 +33,26 @@ namespace Syllabus.ApiContracts.Courses
         public int Credits { get; set; }
 
         /// <summary>
+        /// Number of lecture hours for the course.
+        /// </summary>
+        public int LectureHours { get; set; }
+
+        /// <summary>
+        /// Number of seminar hours for the course.
+        /// </summary>
+        public int SeminarHours { get; set; }
+
+        /// <summary>
+        /// Number of lab hours for the course.
+        /// </summary>
+        public int LabHours { get; set; }
+
+        /// <summary>
+        /// Number of practice hours for the course.
+        /// </summary>
+        public int PracticeHours { get; set; }
+
+        /// <summary>
         /// The academic program this course belongs to.
         /// </summary>
         public string? AcademicProgram { get; set; }
