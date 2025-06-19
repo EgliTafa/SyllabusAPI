@@ -100,10 +100,6 @@ using (var scope = app.Services.CreateScope())
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     await RoleSeeder.SeedRolesAsync(roleManager);
 
-    // Seed courses
-    var context = scope.ServiceProvider.GetRequiredService<SyllabusDbContext>();
-    await CourseSeeder.SeedCoursesAsync(context);
-
     // Create admin user if it doesn't exist
     var userManager = scope.ServiceProvider.GetRequiredService<UserManager<UserEntity>>();
     var adminEmail = "admin@syllabus.com";
