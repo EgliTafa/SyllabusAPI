@@ -1,4 +1,6 @@
-﻿namespace Syllabus.ApiContracts.Courses
+﻿using System.Text.Json.Serialization;
+
+namespace Syllabus.ApiContracts.Courses
 {
     /// <summary>
     /// Request model for listing all courses.

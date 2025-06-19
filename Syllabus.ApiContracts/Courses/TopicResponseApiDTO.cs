@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace Syllabus.ApiContracts.Courses
 {
     /// <summary>
@@ -8,16 +10,19 @@ namespace Syllabus.ApiContracts.Courses
         /// <summary>
         /// The title of the topic.
         /// </summary>
+        [JsonPropertyName("title")]
         public string Title { get; set; } = default!;
 
         /// <summary>
         /// The number of hours allocated to this topic.
         /// </summary>
+        [JsonPropertyName("hours")]
         public int Hours { get; set; }
 
         /// <summary>
         /// Optional reference material for this topic.
         /// </summary>
+        [JsonPropertyName("reference")]
         public string? Reference { get; set; }
     }
 } 
