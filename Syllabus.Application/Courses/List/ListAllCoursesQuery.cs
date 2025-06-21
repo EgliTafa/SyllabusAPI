@@ -20,20 +20,20 @@ public class ListAllCoursesQueryHandler : IRequestHandler<ListAllCoursesQuery, E
     {
         var courses = await _courseRepository.GetAllAsync();
 
-        if (courses is null || courses.Count == 0)
-        {
-            return Error.NotFound(description: "No courses found.");
-        }
-
         var dto = new ListAllCoursesResponseApiDTO
         {
-            AllCourses = courses.Select(course => new CourseResponseApiDTO
+            AllCourses = courses?.Select(course => new CourseResponseApiDTO
             {
                 Id = course.Id,
                 Title = course.Title,
                 Code = course.Code,
                 Semester = course.Semester,
                 Credits = course.Credits,
+                Year = course.Year,
+                LectureHours = course.LectureHours,
+                SeminarHours = course.SeminarHours,
+                LabHours = course.LabHours,
+                PracticeHours = course.PracticeHours,
                 AcademicProgram = course.Detail?.AcademicProgram,
                 AcademicYear = course.Detail?.AcademicYear,
                 Language = course.Detail?.Language,
@@ -53,8 +53,9 @@ public class ListAllCoursesQueryHandler : IRequestHandler<ListAllCoursesQuery, E
                     Title = t.Title,
                     Hours = t.Hours,
                     Reference = t.Reference
-                }).ToList()
-            }).ToList()
+                }).ToList(),
+                ElectiveGroup = course.ElectiveGroup
+            }).ToList() ?? new List<CourseResponseApiDTO>()
         };
 
         return dto;

@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Syllabus.Infrastructure.Data;
 
@@ -11,9 +12,11 @@ using Syllabus.Infrastructure.Data;
 namespace Syllabus.Infrastructure.Migrations
 {
     [DbContext(typeof(SyllabusDbContext))]
-    partial class SyllabusDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250618212755_AddYear")]
+    partial class AddYear
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -171,10 +174,6 @@ namespace Syllabus.Infrastructure.Migrations
                     b.Property<int>("Credits")
                         .HasColumnType("int");
 
-                    b.Property<string>("ElectiveGroup")
-                        .HasMaxLength(50)
-                        .HasColumnType("nvarchar(50)");
-
                     b.Property<int>("Evaluation")
                         .HasColumnType("int");
 
@@ -182,9 +181,6 @@ namespace Syllabus.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("LectureHours")
-                        .HasColumnType("int");
-
-                    b.Property<int>("PracticeHours")
                         .HasColumnType("int");
 
                     b.Property<int>("Semester")
@@ -506,24 +502,19 @@ namespace Syllabus.Infrastructure.Migrations
                                 .HasColumnType("int");
 
                             b1.Property<int>("FinalExamPercent")
-                                .HasColumnType("int")
-                                .HasAnnotation("Relational:JsonPropertyName", "finalExamPercent");
+                                .HasColumnType("int");
 
                             b1.Property<int>("ParticipationPercent")
-                                .HasColumnType("int")
-                                .HasAnnotation("Relational:JsonPropertyName", "participationPercent");
+                                .HasColumnType("int");
 
                             b1.Property<int>("Test1Percent")
-                                .HasColumnType("int")
-                                .HasAnnotation("Relational:JsonPropertyName", "test1Percent");
+                                .HasColumnType("int");
 
                             b1.Property<int>("Test2Percent")
-                                .HasColumnType("int")
-                                .HasAnnotation("Relational:JsonPropertyName", "test2Percent");
+                                .HasColumnType("int");
 
                             b1.Property<int>("Test3Percent")
-                                .HasColumnType("int")
-                                .HasAnnotation("Relational:JsonPropertyName", "test3Percent");
+                                .HasColumnType("int");
 
                             b1.HasKey("CourseDetailId");
 
@@ -539,28 +530,22 @@ namespace Syllabus.Infrastructure.Migrations
                                 .HasColumnType("int");
 
                             b1.Property<int>("ExerciseHours")
-                                .HasColumnType("int")
-                                .HasAnnotation("Relational:JsonPropertyName", "exerciseHours");
+                                .HasColumnType("int");
 
                             b1.Property<int>("IndividualStudyHours")
-                                .HasColumnType("int")
-                                .HasAnnotation("Relational:JsonPropertyName", "individualStudyHours");
+                                .HasColumnType("int");
 
                             b1.Property<int>("LabHours")
-                                .HasColumnType("int")
-                                .HasAnnotation("Relational:JsonPropertyName", "labHours");
+                                .HasColumnType("int");
 
                             b1.Property<int>("LectureHours")
-                                .HasColumnType("int")
-                                .HasAnnotation("Relational:JsonPropertyName", "lectureHours");
+                                .HasColumnType("int");
 
                             b1.Property<int>("PracticeHours")
-                                .HasColumnType("int")
-                                .HasAnnotation("Relational:JsonPropertyName", "practiceHours");
+                                .HasColumnType("int");
 
                             b1.Property<int>("WeeklyHours")
-                                .HasColumnType("int")
-                                .HasAnnotation("Relational:JsonPropertyName", "weeklyHours");
+                                .HasColumnType("int");
 
                             b1.HasKey("CourseDetailId");
 

@@ -1,4 +1,6 @@
-﻿namespace Syllabus.ApiContracts.Authentication
+﻿using System.Text.Json.Serialization;
+
+namespace Syllabus.ApiContracts.Authentication
 {
     /// <summary>
     /// The request model for user login.
@@ -6,13 +8,15 @@
     public class LoginRequestApiDTO
     {
         /// <summary>
-        /// The email address of the user attempting to log in.
+        /// The user's email address.
         /// </summary>
+        [JsonPropertyName("email")]
         public string Email { get; set; } = default!;
 
         /// <summary>
-        /// The password of the user attempting to log in.
+        /// The user's password.
         /// </summary>
+        [JsonPropertyName("password")]
         public string Password { get; set; } = default!;
     }
 }

@@ -3,6 +3,7 @@ using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
 using Syllabus.Domain.Sylabusses;
 using System.Linq;
+using System.Collections.Generic;
 
 namespace Syllabus.Application.Syllabus
 {
@@ -44,19 +45,152 @@ namespace Syllabus.Application.Syllabus
             {
                 // Header (once at the top)
                 col.Item().Element(HeaderSection);
-                // For each course in the syllabus
-                bool first = true;
-                foreach (var course in _syllabus.Courses)
+
+                // Calculate totals
+                var courses = _syllabus.Courses.ToList();
+                var totals = new Dictionary<int, Dictionary<int, (int credits, int lecture, int seminar, int lab, int practice, int total)>>();
+                var overall = (credits: 0, lecture: 0, seminar: 0, lab: 0, practice: 0, total: 0);
+                foreach (var c in courses)
                 {
-                    var detail = course.Detail;
-                    if (!first) col.Item().PageBreak();
-                    first = false;
-                    col.Item().PaddingTop(10).Element(c => CourseTitleSection(c, course));
-                    col.Item().PaddingTop(10).Element(c => TeachingActivityTable(c, course, detail));
-                    col.Item().PaddingTop(10).Element(c => EvaluationSection(c, detail));
-                    col.Item().PaddingTop(10).Element(c => ObjectivesSection(c, detail));
-                    col.Item().PaddingTop(10).Element(c => TopicsSection(c, detail));
-                    col.Item().PaddingTop(10).Element(LiteratureSection);
+                    if (!totals.ContainsKey(c.Year)) totals[c.Year] = new Dictionary<int, (int, int, int, int, int, int)>();
+                    if (!totals[c.Year].ContainsKey(c.Semester)) totals[c.Year][c.Semester] = (0, 0, 0, 0, 0, 0);
+                    var t = totals[c.Year][c.Semester];
+                    t.credits += c.Credits;
+                    t.lecture += c.LectureHours;
+                    t.seminar += c.SeminarHours;
+                    t.lab += c.LabHours;
+                    t.practice += c.Detail?.TeachingPlan?.PracticeHours ?? 0;
+                    t.total += c.LectureHours + c.SeminarHours + c.LabHours + (c.Detail?.TeachingPlan?.PracticeHours ?? 0);
+                    totals[c.Year][c.Semester] = t;
+                    overall.credits += c.Credits;
+                    overall.lecture += c.LectureHours;
+                    overall.seminar += c.SeminarHours;
+                    overall.lab += c.LabHours;
+                    overall.practice += c.Detail?.TeachingPlan?.PracticeHours ?? 0;
+                    overall.total += c.LectureHours + c.SeminarHours + c.LabHours + (c.Detail?.TeachingPlan?.PracticeHours ?? 0);
+                }
+
+                // Summary Table
+                col.Item().PaddingBottom(10).Element(c =>
+                    c.Table(table =>
+                    {
+                        table.ColumnsDefinition(columns =>
+                        {
+                            columns.RelativeColumn(); // Year
+                            columns.RelativeColumn(); // Semester
+                            columns.RelativeColumn(); // Credits
+                            columns.RelativeColumn(); // Lecture
+                            columns.RelativeColumn(); // Seminar
+                            columns.RelativeColumn(); // Lab
+                            columns.RelativeColumn(); // Practice
+                            columns.RelativeColumn(); // Total
+                        });
+                        table.Header(header =>
+                        {
+                            header.Cell().Element(CellStyleHeader).Text("Viti");
+                            header.Cell().Element(CellStyleHeader).Text("Semestri");
+                            header.Cell().Element(CellStyleHeader).Text("Kredite");
+                            header.Cell().Element(CellStyleHeader).Text("Leksione");
+                            header.Cell().Element(CellStyleHeader).Text("Seminar");
+                            header.Cell().Element(CellStyleHeader).Text("Laboratore");
+                            header.Cell().Element(CellStyleHeader).Text("Praktike");
+                            header.Cell().Element(CellStyleHeader).Text("Totale");
+                        });
+                        foreach (var year in totals.Keys.OrderBy(y => y))
+                        {
+                            foreach (var semester in totals[year].Keys.OrderBy(s => s))
+                            {
+                                var t = totals[year][semester];
+                                table.Cell().Element(CellStyle).Text(year.ToString());
+                                table.Cell().Element(CellStyle).Text(semester.ToString());
+                                table.Cell().Element(CellStyle).Text(t.credits.ToString());
+                                table.Cell().Element(CellStyle).Text(t.lecture.ToString());
+                                table.Cell().Element(CellStyle).Text(t.seminar.ToString());
+                                table.Cell().Element(CellStyle).Text(t.lab.ToString());
+                                table.Cell().Element(CellStyle).Text(t.practice.ToString());
+                                table.Cell().Element(CellStyle).Text(t.total.ToString());
+                            }
+                        }
+                        // Overall row
+                        table.Cell().Element(CellStyleHeader).Text("Total");
+                        table.Cell().Element(CellStyleHeader).Text("");
+                        table.Cell().Element(CellStyleHeader).Text(overall.credits.ToString());
+                        table.Cell().Element(CellStyleHeader).Text(overall.lecture.ToString());
+                        table.Cell().Element(CellStyleHeader).Text(overall.seminar.ToString());
+                        table.Cell().Element(CellStyleHeader).Text(overall.lab.ToString());
+                        table.Cell().Element(CellStyleHeader).Text(overall.practice.ToString());
+                        table.Cell().Element(CellStyleHeader).Text(overall.total.ToString());
+                    })
+                );
+
+                // Group and display courses by year/semester
+                foreach (var year in courses.Select(c => c.Year).Distinct().OrderBy(y => y))
+                {
+                    col.Item().Text($"Viti {year}").Bold().FontSize(13).FontColor(Colors.Blue.Medium);
+                    foreach (var semester in courses.Where(c => c.Year == year).Select(c => c.Semester).Distinct().OrderBy(s => s))
+                    {
+                        col.Item().Text($"Semestri {semester}").Bold().FontSize(12).FontColor(Colors.Blue.Darken2);
+                        var group = courses.Where(c => c.Year == year && c.Semester == semester).ToList();
+                        // Group electives and mandatory
+                        var electives = group.Where(c => c.Type == CourseType.Specialized || c.Type == CourseType.Elective || c.Type == CourseType.FinalProject).ToList();
+                        var electivesI = electives.Where(c => c.ElectiveGroup == "Elective I").ToList();
+                        var electivesII = electives.Where(c => c.ElectiveGroup == "Elective II").ToList();
+                        var otherElectives = electives.Where(c => string.IsNullOrEmpty(c.ElectiveGroup)).ToList();
+                        var mandatory = group.Where(c => c.Type == CourseType.Mandatory || c.Type == CourseType.Advanced).ToList();
+                        // Mandatory courses
+                        foreach (var course in mandatory)
+                        {
+                            col.Item().PaddingTop(10).Element(c => CourseTitleSection(c, course));
+                            col.Item().PaddingTop(10).Element(c => TeachingActivityTable(c, course, course.Detail));
+                            col.Item().PaddingTop(10).Element(c => EvaluationSection(c, course.Detail));
+                            col.Item().PaddingTop(10).Element(c => ObjectivesSection(c, course.Detail));
+                            col.Item().PaddingTop(10).Element(c => TopicsSection(c, course.Detail));
+                            col.Item().PaddingTop(10).Element(LiteratureSection);
+                        }
+                        // Electives group
+                        if (electives.Any())
+                        {
+                            col.Item().Text("Lëndë me zgjedhje").Bold().FontSize(12).FontColor(Colors.Purple.Medium);
+                            // Elective I
+                            if (electivesI.Any())
+                            {
+                                col.Item().Text("Elective I").Bold().FontSize(11).FontColor(Colors.Blue.Lighten2);
+                                foreach (var course in electivesI)
+                                {
+                                    col.Item().PaddingTop(10).Element(c => CourseTitleSection(c, course));
+                                    col.Item().PaddingTop(10).Element(c => TeachingActivityTable(c, course, course.Detail));
+                                    col.Item().PaddingTop(10).Element(c => EvaluationSection(c, course.Detail));
+                                    col.Item().PaddingTop(10).Element(c => ObjectivesSection(c, course.Detail));
+                                    col.Item().PaddingTop(10).Element(c => TopicsSection(c, course.Detail));
+                                    col.Item().PaddingTop(10).Element(LiteratureSection);
+                                }
+                            }
+                            // Elective II
+                            if (electivesII.Any())
+                            {
+                                col.Item().Text("Elective II").Bold().FontSize(11).FontColor(Colors.Orange.Lighten2);
+                                foreach (var course in electivesII)
+                                {
+                                    col.Item().PaddingTop(10).Element(c => CourseTitleSection(c, course));
+                                    col.Item().PaddingTop(10).Element(c => TeachingActivityTable(c, course, course.Detail));
+                                    col.Item().PaddingTop(10).Element(c => EvaluationSection(c, course.Detail));
+                                    col.Item().PaddingTop(10).Element(c => ObjectivesSection(c, course.Detail));
+                                    col.Item().PaddingTop(10).Element(c => TopicsSection(c, course.Detail));
+                                    col.Item().PaddingTop(10).Element(LiteratureSection);
+                                }
+                            }
+                            // Other electives
+                            foreach (var course in otherElectives)
+                            {
+                                col.Item().PaddingTop(10).Element(c => CourseTitleSection(c, course));
+                                col.Item().PaddingTop(10).Element(c => TeachingActivityTable(c, course, course.Detail));
+                                col.Item().PaddingTop(10).Element(c => EvaluationSection(c, course.Detail));
+                                col.Item().PaddingTop(10).Element(c => ObjectivesSection(c, course.Detail));
+                                col.Item().PaddingTop(10).Element(c => TopicsSection(c, course.Detail));
+                                col.Item().PaddingTop(10).Element(LiteratureSection);
+                            }
+                        }
+                    }
                 }
                 // Footer (once at the end)
                 col.Item().PaddingTop(20).Element(FooterSection);

@@ -31,13 +31,16 @@ namespace Syllabus.Application.Courses.Create
             {
                 Title = request.Request.Title,
                 Code = request.Request.Code,
+                Year = request.Request.Year,
                 Semester = request.Request.Semester,
                 LectureHours = request.Request.LectureHours,
                 SeminarHours = request.Request.SeminarHours,
                 LabHours = request.Request.LabHours,
+                PracticeHours = request.Request.PracticeHours,
                 Credits = request.Request.Credits,
                 Evaluation = request.Request.Evaluation,
-                Type = request.Request.Type
+                Type = request.Request.Type,
+                ElectiveGroup = request.Request.ElectiveGroup
             };
 
             if (request.Request.Detail is not null)
