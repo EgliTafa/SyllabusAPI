@@ -44,7 +44,8 @@ namespace Syllabus.Application.Authentication.Login
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Token = token
+                Token = token,
+                EmailConfirmed = user.EmailConfirmed
             };
         }
     }
