@@ -37,7 +37,8 @@ namespace Syllabus.Application.Authentication.GetAllUsers
                     LockoutEnabled = user.LockoutEnabled,
                     LockoutEnd = user.LockoutEnd,
                     Status = user.Status.ToString(),
-                    Roles = roles.ToList()
+                    Roles = roles.ToList(),
+                    ProfilePictureUrl = user.ProfilePictureUrl
                 });
             }
 

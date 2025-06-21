@@ -8,6 +8,7 @@ using Syllabus.Application.Authentication.Register;
 using Syllabus.Application.Authentication.UpdateDetails;
 using Syllabus.Application.Authentication.ChangePassword;
 using Syllabus.Application.Authentication.ResendEmailConfirmation;
+using Syllabus.Application.Authentication.UploadProfilePicture;
 using SyllabusAPI.Helpers;
 using System.Security.Claims;
 
@@ -136,6 +137,24 @@ namespace SyllabusAPI.Controllers
         public async Task<IActionResult> ResendEmailConfirmation([FromBody] ResendEmailConfirmationApiDTO request)
         {
             var command = new ResendEmailConfirmationCommand(request);
+            var result = await _mediator.Send(command);
+            return result.ToActionResult(this);
+        }
+
+        /// <summary>
+        /// Uploads a profile picture for the currently authenticated user.
+        /// </summary>
+        /// <param name="request">The upload profile picture request containing the file data.</param>
+        /// <returns>The URL of the uploaded profile picture if successful; otherwise, returns validation errors.</returns>
+        /// <response code="200">Profile picture uploaded successfully.</response>
+        /// <response code="400">Invalid file data or validation errors.</response>
+        /// <response code="401">User is not authenticated.</response>
+        [Authorize]
+        [HttpPost("upload-profile-picture")]
+        public async Task<IActionResult> UploadProfilePicture([FromBody] UploadProfilePictureRequestApiDTO request)
+        {
+            var userId = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            var command = new UploadProfilePictureCommand(userId, request);
             var result = await _mediator.Send(command);
             return result.ToActionResult(this);
         }

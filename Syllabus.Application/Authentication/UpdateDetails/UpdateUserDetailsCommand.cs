@@ -44,7 +44,8 @@ namespace Syllabus.Application.Authentication.UpdateDetails
                 Email = user.Email,
                 PhonePrefix = user.PhoneNumberInfo.Prefix,
                 PhoneNumber = user.PhoneNumberInfo.Number,
-                ProfilePictureUrl = user.ProfilePictureUrl
+                ProfilePictureUrl = user.ProfilePictureUrl,
+                EmailConfirmed = user.EmailConfirmed
             };
         }
     }

@@ -66,5 +66,11 @@ namespace Syllabus.ApiContracts.Authentication
         /// </summary>
         [JsonPropertyName("roles")]
         public List<string> Roles { get; set; } = new List<string>();
+
+        /// <summary>
+        /// The URL to the user's profile picture.
+        /// </summary>
+        [JsonPropertyName("profilePictureUrl")]
+        public string? ProfilePictureUrl { get; set; }
     }
 } 

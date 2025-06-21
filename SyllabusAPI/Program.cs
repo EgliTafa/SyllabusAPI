@@ -144,6 +144,15 @@ app.UseSwaggerUI(c =>
     //c.RoutePrefix = string.Empty; // serve at root
 });
 
+// Serve static files from wwwroot/uploads
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads")),
+    RequestPath = "/uploads"
+});
+
 app.MapGet("/", context =>
 {
     context.Response.Redirect("/swagger", permanent: false);

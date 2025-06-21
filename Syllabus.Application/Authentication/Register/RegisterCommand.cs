@@ -72,7 +72,8 @@ namespace Syllabus.Application.Authentication.Register
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Email = user.Email,
-                Token = token
+                Token = token,
+                EmailConfirmed = user.EmailConfirmed
             };
         }
     }

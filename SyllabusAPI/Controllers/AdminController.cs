@@ -9,6 +9,7 @@ using Syllabus.Application.Authentication.RestoreUserAccess;
 using Syllabus.Application.Authentication.DeleteUser;
 using Syllabus.Application.Authentication.SearchUsers;
 using Syllabus.Application.Authentication.UpdateUserByAdmin;
+using Syllabus.Application.Authentication.UploadProfilePicture;
 using SyllabusAPI.Helpers;
 
 namespace SyllabusAPI.Controllers;
@@ -138,6 +139,22 @@ public class AdminController : ControllerBase
         var command = new DeleteUserCommand(userId);
         var result = await _mediator.Send(command);
 
-        return result.ToNoContentResult(this);
+        return result.ToActionResult(this);
+    }
+
+    /// <summary>
+    /// Upload profile picture for a specific user
+    /// </summary>
+    [HttpPost("users/{userId}/upload-profile-picture")]
+    [ProducesResponseType(typeof(UploadProfilePictureResponseApiDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> UploadUserProfilePicture(string userId, [FromBody] UploadProfilePictureRequestApiDTO request)
+    {
+        var command = new UploadProfilePictureCommand(userId, request);
+        var result = await _mediator.Send(command);
+        return result.ToActionResult(this);
     }
 } 
