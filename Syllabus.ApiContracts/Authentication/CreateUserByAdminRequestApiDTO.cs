@@ -1,11 +1,11 @@
-﻿using System.Text.Json.Serialization;
+using System.Text.Json.Serialization;
 
 namespace Syllabus.ApiContracts.Authentication
 {
     /// <summary>
-    /// The request model for user registration.
+    /// The request model for creating a user by an administrator.
     /// </summary>
-    public class RegisterUserRequestApiDTO
+    public class CreateUserByAdminRequestApiDTO
     {
         /// <summary>
         /// The first name of the user.
@@ -44,9 +44,15 @@ namespace Syllabus.ApiContracts.Authentication
         public string PhoneNumber { get; set; } = string.Empty;
 
         /// <summary>
+        /// The role to assign to the user.
+        /// </summary>
+        [JsonPropertyName("role")]
+        public string Role { get; set; } = string.Empty;
+
+        /// <summary>
         /// The URL to the user's profile picture (optional).
         /// </summary>
         [JsonPropertyName("profilePictureUrl")]
         public string? ProfilePictureUrl { get; set; }
     }
-}
+} 

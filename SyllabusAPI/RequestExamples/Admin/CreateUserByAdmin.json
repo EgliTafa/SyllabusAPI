@@ -1,0 +1,10 @@
+{
+  "firstName": "John",
+  "lastName": "Doe",
+  "email": "john.doe@example.com",
+  "password": "Password123!",
+  "phonePrefix": "+355",
+  "phoneNumber": "691234567",
+  "role": "Student",
+  "profilePictureUrl": "https://example.com/profile.jpg"
+} 

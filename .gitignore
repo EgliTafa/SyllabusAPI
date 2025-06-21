@@ -364,3 +364,4 @@ FodyWeavers.xsd
 /SyllabusAPI/appsettings.Local.json
 /migration.sql
 /.vscode
+/SyllabusAPI/SyllabusAPI.code-workspace
