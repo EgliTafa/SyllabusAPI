@@ -48,5 +48,29 @@ namespace Syllabus.ApiContracts.Authentication
         /// </summary>
         [JsonPropertyName("profilePictureUrl")]
         public string? ProfilePictureUrl { get; set; }
+
+        /// <summary>
+        /// Whether the user account is locked out.
+        /// </summary>
+        [JsonPropertyName("lockoutEnabled")]
+        public bool LockoutEnabled { get; set; }
+
+        /// <summary>
+        /// The date and time when the lockout ends (null if not locked out).
+        /// </summary>
+        [JsonPropertyName("lockoutEnd")]
+        public string? LockoutEnd { get; set; }
+
+        /// <summary>
+        /// The current status of the user account.
+        /// </summary>
+        [JsonPropertyName("status")]
+        public string Status { get; set; } = default!;
+
+        /// <summary>
+        /// The reason for the user's lockout (if applicable).
+        /// </summary>
+        [JsonPropertyName("lockoutReason")]
+        public string? LockoutReason { get; set; }
     }
 }

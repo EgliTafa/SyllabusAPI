@@ -107,7 +107,11 @@ namespace Syllabus.Application.Authentication.Register
                 Email = user.Email,
                 Token = token,
                 EmailConfirmed = user.EmailConfirmed,
-                ProfilePictureUrl = user.ProfilePictureUrl
+                ProfilePictureUrl = user.ProfilePictureUrl,
+                LockoutEnabled = user.LockoutEnabled,
+                LockoutEnd = user.LockoutEnd?.ToString("yyyy-MM-ddTHH:mm:ssZ"),
+                Status = user.Status.ToString(),
+                LockoutReason = user.LockoutReason
             };
         }
     }

@@ -38,6 +38,12 @@ namespace Syllabus.ApiContracts.Authentication
         public string Status { get; set; } = string.Empty;
 
         /// <summary>
+        /// The reason for the user's lockout (if applicable).
+        /// </summary>
+        [JsonPropertyName("lockoutReason")]
+        public string? LockoutReason { get; set; }
+
+        /// <summary>
         /// The message indicating the result of the operation.
         /// </summary>
         [JsonPropertyName("message")]
