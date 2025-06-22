@@ -11,9 +11,13 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Console.WriteLine("Starting Syllabus API configuration...");
+
 builder.Services.AddIdentity<UserEntity, IdentityRole>()
     .AddEntityFrameworkStores<SyllabusDbContext>()
     .AddDefaultTokenProviders();
+
+Console.WriteLine("Identity services configured...");
 
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -22,9 +26,13 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.ConfigureApplicationServices(builder.Configuration);
-builder.Services.AddSyllabusAuthentication(builder.Configuration);
+Console.WriteLine("Infrastructure services configured...");
 
+builder.Services.ConfigureApplicationServices(builder.Configuration);
+Console.WriteLine("Application services configured...");
+
+builder.Services.AddSyllabusAuthentication(builder.Configuration);
+Console.WriteLine("Authentication services configured...");
 
 builder.Services.AddCors(options =>
 {
@@ -39,15 +47,6 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader()
                    .AllowCredentials();
         });
-    
-    // Add a more permissive policy for debugging
-    options.AddPolicy("AllowAll",
-        builder =>
-        {
-            builder.AllowAnyOrigin()
-                   .AllowAnyMethod()
-                   .AllowAnyHeader();
-        });
 });
 
 
@@ -56,8 +55,7 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.ListenAnyIP(8080); // no HTTPS binding in container
 });
 
-builder.Services.AddControllers()
-    .AddApplicationPart(typeof(Program).Assembly);
+builder.Services.AddControllers();
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -104,9 +102,12 @@ builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();
 
 var app = builder.Build();
 
+Console.WriteLine("Application built successfully...");
+
 // Seed roles
 using (var scope = app.Services.CreateScope())
 {
+    Console.WriteLine("Starting database seeding...");
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     await RoleSeeder.SeedRolesAsync(roleManager);
 
@@ -147,6 +148,8 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+Console.WriteLine("Database seeding completed...");
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
@@ -173,10 +176,14 @@ if (!app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
 }
-app.UseCors("AllowAll"); // Use more permissive CORS for debugging
+app.UseCors("AllowReactApp");
 
 app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+Console.WriteLine("Middleware configured, starting application...");
+
+Console.WriteLine("Starting Syllabus API...");
 app.Run();
