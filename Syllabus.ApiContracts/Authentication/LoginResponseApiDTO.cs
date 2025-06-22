@@ -42,5 +42,11 @@ namespace Syllabus.ApiContracts.Authentication
         /// </summary>
         [JsonPropertyName("emailConfirmed")]
         public bool EmailConfirmed { get; set; }
+
+        /// <summary>
+        /// The URL of the user's profile picture.
+        /// </summary>
+        [JsonPropertyName("profilePictureUrl")]
+        public string? ProfilePictureUrl { get; set; }
     }
 }

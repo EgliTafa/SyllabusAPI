@@ -10,6 +10,7 @@ using Syllabus.Application.Authentication.DeleteUser;
 using Syllabus.Application.Authentication.SearchUsers;
 using Syllabus.Application.Authentication.UpdateUserByAdmin;
 using Syllabus.Application.Authentication.UploadProfilePicture;
+using Syllabus.Application.Authentication.ChangePasswordByAdmin;
 using SyllabusAPI.Helpers;
 
 namespace SyllabusAPI.Controllers;
@@ -137,6 +138,23 @@ public class AdminController : ControllerBase
     public async Task<IActionResult> DeleteUser(string userId)
     {
         var command = new DeleteUserCommand(userId);
+        var result = await _mediator.Send(command);
+
+        return result.ToActionResult(this);
+    }
+
+    /// <summary>
+    /// Change user password by administrator
+    /// </summary>
+    [HttpPost("users/{userId}/change-password")]
+    [ProducesResponseType(typeof(ChangePasswordByAdminResponseApiDTO), StatusCodes.Status200OK)]
+    [ProducesResponseType(StatusCodes.Status400BadRequest)]
+    [ProducesResponseType(StatusCodes.Status401Unauthorized)]
+    [ProducesResponseType(StatusCodes.Status403Forbidden)]
+    [ProducesResponseType(StatusCodes.Status404NotFound)]
+    public async Task<IActionResult> ChangeUserPassword(string userId, [FromBody] ChangePasswordByAdminRequestApiDTO request)
+    {
+        var command = new ChangePasswordByAdminCommand(userId, request);
         var result = await _mediator.Send(command);
 
         return result.ToActionResult(this);

@@ -53,7 +53,8 @@ namespace Syllabus.Application.Authentication.Login
                 LastName = user.LastName,
                 Email = user.Email,
                 Token = token,
-                EmailConfirmed = user.EmailConfirmed
+                EmailConfirmed = user.EmailConfirmed,
+                ProfilePictureUrl = user.ProfilePictureUrl
             };
         }
     }

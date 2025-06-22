@@ -26,6 +26,7 @@ public static partial class AuthenticationErrors
     public static readonly Error PasswordTooShort = Error.Validation("Authentication.PasswordTooShort", "Password must be at least 8 characters long.");
     public static readonly Error CurrentPasswordIncorrect = Error.Validation("Authentication.CurrentPasswordIncorrect", "Current password is incorrect.");
     public static readonly Error PasswordsDoNotMatch = Error.Validation("Authentication.PasswordsDoNotMatch", "Passwords do not match.");
+    public static readonly Error PasswordChangeFailed = Error.Failure("Authentication.PasswordChangeFailed", "Failed to change password.");
 
     // Role errors
     public static readonly Error InvalidRole = Error.Validation("Authentication.InvalidRole", "Invalid role specified.");

@@ -106,7 +106,8 @@ namespace Syllabus.Application.Authentication.Register
                 LastName = user.LastName,
                 Email = user.Email,
                 Token = token,
-                EmailConfirmed = user.EmailConfirmed
+                EmailConfirmed = user.EmailConfirmed,
+                ProfilePictureUrl = user.ProfilePictureUrl
             };
         }
     }
