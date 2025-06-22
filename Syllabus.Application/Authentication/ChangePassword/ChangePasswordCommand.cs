@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Syllabus.ApiContracts.Authentication;
 using Syllabus.Domain.Users;
+using Syllabus.Application.Authentication;
 
 namespace Syllabus.Application.Authentication.ChangePassword
 {
@@ -22,21 +23,21 @@ namespace Syllabus.Application.Authentication.ChangePassword
             var request = command.Request;
             var user = await _userManager.FindByIdAsync(request.UserId);
             if (user == null)
-                return Error.NotFound("User not found.");
+                return AuthenticationErrors.UserByIdNotFound;
 
             // Verify current password
             var isCurrentPasswordValid = await _userManager.CheckPasswordAsync(user, request.CurrentPassword);
             if (!isCurrentPasswordValid)
-                return Error.Validation("Current password is incorrect.");
+                return AuthenticationErrors.CurrentPasswordIncorrect;
 
             // Validate new password
             if (request.NewPassword != request.ConfirmPassword)
-                return Error.Validation("New password and confirmation password do not match.");
+                return AuthenticationErrors.PasswordsDoNotMatch;
 
             // Change password
             var result = await _userManager.ChangePasswordAsync(user, request.CurrentPassword, request.NewPassword);
             if (!result.Succeeded)
-                return Error.Validation(string.Join("; ", result.Errors.Select(e => e.Description)));
+                return AuthenticationErrors.UserUpdateFailed;
 
             return new ChangePasswordResponseApiDTO
             {

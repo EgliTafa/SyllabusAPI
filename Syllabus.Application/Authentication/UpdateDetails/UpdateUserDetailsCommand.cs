@@ -1,8 +1,11 @@
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Syllabus.ApiContracts.Authentication;
 using Syllabus.Domain.Users;
+using Syllabus.Infrastructure.Data;
+using Syllabus.Application.Authentication;
 
 namespace Syllabus.Application.Authentication.UpdateDetails
 {
@@ -11,17 +14,49 @@ namespace Syllabus.Application.Authentication.UpdateDetails
     public class UpdateUserDetailsCommandHandler : IRequestHandler<UpdateUserDetailsCommand, ErrorOr<UpdateUserDetailsResponseApiDTO>>
     {
         private readonly UserManager<UserEntity> _userManager;
+        private readonly SyllabusDbContext _dbContext;
 
-        public UpdateUserDetailsCommandHandler(UserManager<UserEntity> userManager)
+        public UpdateUserDetailsCommandHandler(UserManager<UserEntity> userManager, SyllabusDbContext dbContext)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public async Task<ErrorOr<UpdateUserDetailsResponseApiDTO>> Handle(UpdateUserDetailsCommand command, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(command.UserId);
             if (user == null)
-                return Error.NotFound("User not found.");
+                return AuthenticationErrors.UserByIdNotFound;
+
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(command.Request.FirstName))
+                return AuthenticationErrors.MissingRequiredFields;
+
+            if (string.IsNullOrWhiteSpace(command.Request.LastName))
+                return AuthenticationErrors.MissingRequiredFields;
+
+            if (string.IsNullOrWhiteSpace(command.Request.PhonePrefix))
+                return AuthenticationErrors.PhoneNumberRequired;
+
+            if (string.IsNullOrWhiteSpace(command.Request.PhoneNumber))
+                return AuthenticationErrors.PhoneNumberRequired;
+
+            // Check if phone number is being changed and if it's already taken by another user
+            var currentPhoneKey = $"{user.PhoneNumberInfo.Prefix}_{user.PhoneNumberInfo.Number}";
+            var newPhoneKey = $"{command.Request.PhonePrefix}_{command.Request.PhoneNumber}";
+            
+            if (currentPhoneKey != newPhoneKey)
+            {
+                var existingPhoneUser = await _dbContext.Users
+                    .FirstOrDefaultAsync(u => 
+                        u.Id != command.UserId &&
+                        u.PhoneNumberInfo.Prefix == command.Request.PhonePrefix && 
+                        u.PhoneNumberInfo.Number == command.Request.PhoneNumber, 
+                        cancellationToken);
+                
+                if (existingPhoneUser != null)
+                    return AuthenticationErrors.PhoneNumberAlreadyExists;
+            }
 
             user.FirstName = command.Request.FirstName;
             user.LastName = command.Request.LastName;
@@ -34,7 +69,7 @@ namespace Syllabus.Application.Authentication.UpdateDetails
 
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
-                return Error.Validation(string.Join("; ", result.Errors.Select(e => e.Description)));
+                return AuthenticationErrors.UserUpdateFailed;
 
             return new UpdateUserDetailsResponseApiDTO
             {

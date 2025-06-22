@@ -1,8 +1,11 @@
 using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
+using Microsoft.EntityFrameworkCore;
 using Syllabus.ApiContracts.Authentication;
 using Syllabus.Domain.Users;
+using Syllabus.Infrastructure.Data;
+using Syllabus.Application.Authentication;
 
 namespace Syllabus.Application.Authentication.UpdateUserByAdmin
 {
@@ -12,25 +15,63 @@ namespace Syllabus.Application.Authentication.UpdateUserByAdmin
     {
         private readonly UserManager<UserEntity> _userManager;
         private readonly RoleManager<IdentityRole> _roleManager;
+        private readonly SyllabusDbContext _dbContext;
 
-        public UpdateUserByAdminCommandHandler(UserManager<UserEntity> userManager, RoleManager<IdentityRole> roleManager)
+        public UpdateUserByAdminCommandHandler(UserManager<UserEntity> userManager, RoleManager<IdentityRole> roleManager, SyllabusDbContext dbContext)
         {
             _userManager = userManager ?? throw new ArgumentNullException(nameof(userManager));
             _roleManager = roleManager ?? throw new ArgumentNullException(nameof(roleManager));
+            _dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
         }
 
         public async Task<ErrorOr<UpdateUserByAdminResponseApiDTO>> Handle(UpdateUserByAdminCommand command, CancellationToken cancellationToken)
         {
             var user = await _userManager.FindByIdAsync(command.UserId);
             if (user == null)
-                return Error.NotFound("User not found.");
+                return AuthenticationErrors.UserByIdNotFound;
+
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(command.Request.Email))
+                return AuthenticationErrors.EmailRequired;
+
+            if (string.IsNullOrWhiteSpace(command.Request.FirstName))
+                return AuthenticationErrors.MissingRequiredFields;
+
+            if (string.IsNullOrWhiteSpace(command.Request.LastName))
+                return AuthenticationErrors.MissingRequiredFields;
+
+            if (string.IsNullOrWhiteSpace(command.Request.PhonePrefix))
+                return AuthenticationErrors.PhoneNumberRequired;
+
+            if (string.IsNullOrWhiteSpace(command.Request.PhoneNumber))
+                return AuthenticationErrors.PhoneNumberRequired;
+
+            if (string.IsNullOrWhiteSpace(command.Request.Role))
+                return AuthenticationErrors.InvalidRole;
 
             // Check if email is being changed and if it's already taken
             if (user.Email != command.Request.Email)
             {
                 var existingUser = await _userManager.FindByEmailAsync(command.Request.Email);
                 if (existingUser != null && existingUser.Id != command.UserId)
-                    return Error.Conflict("Email is already taken.");
+                    return AuthenticationErrors.EmailAlreadyTaken;
+            }
+
+            // Check if phone number is being changed and if it's already taken by another user
+            var currentPhoneKey = $"{user.PhoneNumberInfo.Prefix}_{user.PhoneNumberInfo.Number}";
+            var newPhoneKey = $"{command.Request.PhonePrefix}_{command.Request.PhoneNumber}";
+            
+            if (currentPhoneKey != newPhoneKey)
+            {
+                var existingPhoneUser = await _dbContext.Users
+                    .FirstOrDefaultAsync(u => 
+                        u.Id != command.UserId &&
+                        u.PhoneNumberInfo.Prefix == command.Request.PhonePrefix && 
+                        u.PhoneNumberInfo.Number == command.Request.PhoneNumber, 
+                        cancellationToken);
+                
+                if (existingPhoneUser != null)
+                    return AuthenticationErrors.PhoneNumberAlreadyExists;
             }
 
             // Update user details
@@ -48,14 +89,14 @@ namespace Syllabus.Application.Authentication.UpdateUserByAdmin
             // Update user
             var updateResult = await _userManager.UpdateAsync(user);
             if (!updateResult.Succeeded)
-                return Error.Validation(string.Join("; ", updateResult.Errors.Select(e => e.Description)));
+                return AuthenticationErrors.UserUpdateFailed;
 
             // Update email if changed
             if (user.Email != command.Request.Email)
             {
                 var emailChangeResult = await _userManager.SetEmailAsync(user, command.Request.Email);
                 if (!emailChangeResult.Succeeded)
-                    return Error.Validation(string.Join("; ", emailChangeResult.Errors.Select(e => e.Description)));
+                    return AuthenticationErrors.UserUpdateFailed;
             }
 
             // Update role
@@ -67,13 +108,13 @@ namespace Syllabus.Application.Authentication.UpdateUserByAdmin
             {
                 var removeRolesResult = await _userManager.RemoveFromRolesAsync(user, currentRoles);
                 if (!removeRolesResult.Succeeded)
-                    return Error.Validation(string.Join("; ", removeRolesResult.Errors.Select(e => e.Description)));
+                    return AuthenticationErrors.RoleRemovalFailed;
             }
 
             // Add new role
             var addRoleResult = await _userManager.AddToRoleAsync(user, newRole);
             if (!addRoleResult.Succeeded)
-                return Error.Validation(string.Join("; ", addRoleResult.Errors.Select(e => e.Description)));
+                return AuthenticationErrors.RoleAssignmentFailed;
 
             return new UpdateUserByAdminResponseApiDTO
             {

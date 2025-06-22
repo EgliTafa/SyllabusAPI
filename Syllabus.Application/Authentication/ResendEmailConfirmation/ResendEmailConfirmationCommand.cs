@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Syllabus.ApiContracts.Authentication;
 using Syllabus.Domain.Services.Email;
 using Syllabus.Domain.Users;
+using Syllabus.Application.Authentication;
 
 namespace Syllabus.Application.Authentication.ResendEmailConfirmation
 {
@@ -26,12 +27,12 @@ namespace Syllabus.Application.Authentication.ResendEmailConfirmation
 
             if (string.IsNullOrWhiteSpace(request.Email))
             {
-                return Error.Validation("Email is required.");
+                return AuthenticationErrors.EmailRequired;
             }
 
             if (!EmailValidator.IsValid(request.Email))
             {
-                return Error.Validation("Invalid email format.");
+                return AuthenticationErrors.InvalidEmailFormat;
             }
 
             var user = await _userManager.FindByEmailAsync(request.Email);
@@ -50,7 +51,7 @@ namespace Syllabus.Application.Authentication.ResendEmailConfirmation
 
             if (!sendEmailResult)
             {
-                return Error.Failure("Failed to send email confirmation.");
+                return AuthenticationErrors.EmailConfirmationFailed;
             }
 
             return new ResendEmailConfirmationResponseApiDTO { Message = "Email confirmation has been sent." };

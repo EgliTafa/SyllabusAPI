@@ -4,7 +4,7 @@ using Syllabus.ApiContracts.Courses;
 using Syllabus.ApiContracts.Syllabus;
 using Syllabus.Domain.Sylabusses;
 
-namespace SyllabusApplication.Syllabuses.Commands;
+namespace Syllabus.Application.Syllabus.Update;
 
 public record UpdateSyllabusCommand(UpdateSyllabusRequestApiDTO Request) : IRequest<ErrorOr<SyllabusResponseApiDTO>>;
 
@@ -22,7 +22,7 @@ public class UpdateSyllabusCommandHandler : IRequestHandler<UpdateSyllabusComman
         var syllabus = await _syllabusRepository.GetByIdAsync(request.Request.SyllabusId);
         if (syllabus is null)
         {
-            return Error.NotFound(description: $"Syllabus with ID {request.Request.SyllabusId} not found.");
+            return SyllabusErrors.SyllabusNotFound;
         }
 
         syllabus.Name = request.Request.Name;

@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Syllabus.ApiContracts.Authentication;
 using Syllabus.Domain.Services.File;
 using Syllabus.Domain.Users;
+using Syllabus.Application.Authentication;
 
 namespace Syllabus.Application.Authentication.UploadProfilePicture
 {
@@ -24,47 +25,53 @@ namespace Syllabus.Application.Authentication.UploadProfilePicture
         {
             var user = await _userManager.FindByIdAsync(command.UserId);
             if (user == null)
-                return Error.NotFound("User not found.");
+                return AuthenticationErrors.UserByIdNotFound;
 
-            try
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(command.Request.File))
+                return AuthenticationErrors.MissingRequiredFields;
+
+            if (string.IsNullOrWhiteSpace(command.Request.FileName))
+                return AuthenticationErrors.MissingRequiredFields;
+
+            if (string.IsNullOrWhiteSpace(command.Request.ContentType))
+                return AuthenticationErrors.MissingRequiredFields;
+
+            // Validate file type
+            if (!command.Request.ContentType.StartsWith("image/"))
+                return AuthenticationErrors.InvalidFileFormat;
+
+            // Delete old profile picture if it exists
+            if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
             {
-                // Delete old profile picture if it exists
-                if (!string.IsNullOrEmpty(user.ProfilePictureUrl))
-                {
-                    await _fileService.DeleteProfilePictureAsync(user.ProfilePictureUrl);
-                }
-
-                // Upload new profile picture
-                var newProfilePictureUrl = await _fileService.UploadProfilePictureAsync(
-                    command.Request.File,
-                    command.Request.FileName,
-                    command.Request.ContentType,
-                    command.UserId
-                );
-
-                // Update user's profile picture URL
-                user.ProfilePictureUrl = newProfilePictureUrl;
-                var updateResult = await _userManager.UpdateAsync(user);
-
-                if (!updateResult.Succeeded)
-                {
-                    return Error.Validation(string.Join("; ", updateResult.Errors.Select(e => e.Description)));
-                }
-
-                return new UploadProfilePictureResponseApiDTO
-                {
-                    ProfilePictureUrl = newProfilePictureUrl,
-                    Message = "Profile picture uploaded successfully."
-                };
+                var deleteResult = await _fileService.DeleteProfilePictureAsync(user.ProfilePictureUrl);
+                if (!deleteResult)
+                    return AuthenticationErrors.ProfilePictureUploadFailed;
             }
-            catch (ArgumentException ex)
+
+            // Upload new profile picture
+            var newProfilePictureUrl = await _fileService.UploadProfilePictureAsync(
+                command.Request.File,
+                command.Request.FileName,
+                command.Request.ContentType,
+                command.UserId
+            );
+
+            if (string.IsNullOrEmpty(newProfilePictureUrl))
+                return AuthenticationErrors.ProfilePictureUploadFailed;
+
+            // Update user's profile picture URL
+            user.ProfilePictureUrl = newProfilePictureUrl;
+            var updateResult = await _userManager.UpdateAsync(user);
+
+            if (!updateResult.Succeeded)
+                return AuthenticationErrors.UserUpdateFailed;
+
+            return new UploadProfilePictureResponseApiDTO
             {
-                return Error.Validation(ex.Message);
-            }
-            catch (Exception ex)
-            {
-                return Error.Failure($"Failed to upload profile picture: {ex.Message}");
-            }
+                ProfilePictureUrl = newProfilePictureUrl,
+                Message = "Profile picture uploaded successfully."
+            };
         }
     }
 } 

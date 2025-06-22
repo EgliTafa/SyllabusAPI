@@ -26,7 +26,7 @@ namespace Syllabus.Application.Syllabus.Export
         {
             Sylabus? syllabus = await _syllabusRepository.GetByIdAsync(request.Request.SyllabusId);
             if (syllabus is null)
-                return Error.NotFound("Syllabus.NotFound", "Syllabus with the given ID does not exist.");
+                return SyllabusErrors.SyllabusNotFound;
 
             string logoPath = Path.Combine(Directory.GetCurrentDirectory(), _staticFiles.RootPath, "logo.png");
             SyllabusPdfDocument document = new SyllabusPdfDocument(syllabus, logoPath);

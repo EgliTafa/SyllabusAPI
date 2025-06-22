@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Syllabus.ApiContracts.Authentication;
 using Syllabus.Domain.Users;
+using Syllabus.Application.Authentication;
 
 namespace Syllabus.Application.Authentication.RestoreUserAccess
 {
@@ -22,7 +23,7 @@ namespace Syllabus.Application.Authentication.RestoreUserAccess
             var user = await _userManager.FindByIdAsync(command.UserId);
             if (user == null)
             {
-                return Error.NotFound("User not found.");
+                return AuthenticationErrors.UserByIdNotFound;
             }
 
             // Remove lockout
@@ -33,7 +34,7 @@ namespace Syllabus.Application.Authentication.RestoreUserAccess
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
-                return Error.Failure("Failed to restore user access.");
+                return AuthenticationErrors.UnlockFailed;
             }
 
             return new RestoreUserAccessResponseApiDTO

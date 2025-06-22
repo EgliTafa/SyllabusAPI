@@ -24,7 +24,7 @@ namespace Syllabus.Application.Courses.Create
 
             if (syllabus is null)
             {
-                return Error.NotFound(description: $"Syllabus with ID {request.Request.SyllabusId} not found.");
+                return SyllabusErrors.SyllabusNotFound;
             }
 
             var course = new Course

@@ -2,6 +2,7 @@ using ErrorOr;
 using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Syllabus.Domain.Users;
+using Syllabus.Application.Authentication;
 
 namespace Syllabus.Application.Authentication.DeleteUser
 {
@@ -21,13 +22,13 @@ namespace Syllabus.Application.Authentication.DeleteUser
             var user = await _userManager.FindByIdAsync(command.UserId);
             if (user == null)
             {
-                return Error.NotFound("User not found.");
+                return AuthenticationErrors.UserByIdNotFound;
             }
 
             var result = await _userManager.DeleteAsync(user);
             if (!result.Succeeded)
             {
-                return Error.Failure("Failed to delete user.");
+                return AuthenticationErrors.UserDeletionFailed;
             }
 
             return true;

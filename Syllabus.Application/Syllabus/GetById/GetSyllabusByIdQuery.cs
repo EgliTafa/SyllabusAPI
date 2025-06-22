@@ -3,6 +3,7 @@ using MediatR;
 using Syllabus.ApiContracts.Courses;
 using Syllabus.ApiContracts.Syllabus;
 using Syllabus.Domain.Sylabusses;
+using SyllabusErrors = Syllabus.Application.Syllabus.SyllabusErrors;
 
 namespace Syllabus.Application.Syllabus.GetById
 {
@@ -23,7 +24,7 @@ namespace Syllabus.Application.Syllabus.GetById
 
             if (syllabus is null)
             {
-                return Error.NotFound(description: $"Syllabus with ID {request.Request.SyllabusId} not found.");
+                return SyllabusErrors.SyllabusNotFound;
             }
 
             return new SyllabusResponseApiDTO

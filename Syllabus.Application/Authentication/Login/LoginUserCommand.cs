@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Syllabus.ApiContracts.Authentication;
 using Syllabus.Domain.Authentication;
 using Syllabus.Domain.Users;
+using Syllabus.Application.Authentication;
 
 namespace Syllabus.Application.Authentication.Login
 {
@@ -24,16 +25,23 @@ namespace Syllabus.Application.Authentication.Login
         {
             var request = command.Request;
 
+            // Validate required fields
+            if (string.IsNullOrWhiteSpace(request.Email))
+                return AuthenticationErrors.EmailRequired;
+
+            if (string.IsNullOrWhiteSpace(request.Password))
+                return AuthenticationErrors.PasswordRequired;
+
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                return Error.Unauthorized(description: "Invalid credentials.");
+                return AuthenticationErrors.Unauthorized;
             }
 
             var isPasswordValid = await _userManager.CheckPasswordAsync(user, request.Password);
             if (!isPasswordValid)
             {
-                return Error.Unauthorized(description: "Invalid credentials.");
+                return AuthenticationErrors.Unauthorized;
             }
 
             var token = await _jwtTokenGenerator.GenerateTokenAsync(user);

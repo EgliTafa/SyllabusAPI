@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Syllabus.ApiContracts.Authentication;
 using Syllabus.Domain.Users;
+using Syllabus.Application.Authentication;
 
 namespace Syllabus.Application.Authentication.RevokeUserAccess
 {
@@ -22,7 +23,7 @@ namespace Syllabus.Application.Authentication.RevokeUserAccess
             var user = await _userManager.FindByIdAsync(command.UserId);
             if (user == null)
             {
-                return Error.NotFound("User not found.");
+                return AuthenticationErrors.UserByIdNotFound;
             }
 
             // Calculate lockout end date
@@ -45,7 +46,7 @@ namespace Syllabus.Application.Authentication.RevokeUserAccess
             var result = await _userManager.UpdateAsync(user);
             if (!result.Succeeded)
             {
-                return Error.Failure("Failed to revoke user access.");
+                return AuthenticationErrors.LockoutFailed;
             }
 
             return new RevokeUserAccessResponseApiDTO
