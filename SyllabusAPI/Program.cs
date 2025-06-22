@@ -39,6 +39,15 @@ builder.Services.AddCors(options =>
                    .AllowAnyHeader()
                    .AllowCredentials();
         });
+    
+    // Add a more permissive policy for debugging
+    options.AddPolicy("AllowAll",
+        builder =>
+        {
+            builder.AllowAnyOrigin()
+                   .AllowAnyMethod()
+                   .AllowAnyHeader();
+        });
 });
 
 
@@ -47,7 +56,8 @@ builder.WebHost.ConfigureKestrel(serverOptions =>
     serverOptions.ListenAnyIP(8080); // no HTTPS binding in container
 });
 
-builder.Services.AddControllers();
+builder.Services.AddControllers()
+    .AddApplicationPart(typeof(Program).Assembly);
 
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
@@ -163,7 +173,7 @@ if (!app.Environment.IsProduction())
 {
     app.UseHttpsRedirection();
 }
-app.UseCors("AllowReactApp");
+app.UseCors("AllowAll"); // Use more permissive CORS for debugging
 
 app.UseAuthentication();
 app.UseAuthorization();
