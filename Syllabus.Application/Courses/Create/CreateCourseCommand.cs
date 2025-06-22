@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using MediatR;
 using Syllabus.ApiContracts.Courses;
+using Syllabus.Application.Syllabus;
 using Syllabus.Domain.Sylabusses;
 
 namespace Syllabus.Application.Courses.Create
