@@ -150,6 +150,18 @@ using (var scope = app.Services.CreateScope())
 
 Console.WriteLine("Database seeding completed...");
 
+// Ensure wwwroot/uploads directory exists
+var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+    Console.WriteLine($"Created uploads directory: {uploadsPath}");
+}
+else
+{
+    Console.WriteLine($"Uploads directory already exists: {uploadsPath}");
+}
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
