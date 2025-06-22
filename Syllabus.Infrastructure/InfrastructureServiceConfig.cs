@@ -2,10 +2,12 @@
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Syllabus.Domain.Services.Email;
+using Syllabus.Domain.Services.File;
 using Syllabus.Domain.Sylabusses;
 using Syllabus.Infrastructure.Data;
 using Syllabus.Infrastructure.Repositories;
 using Syllabus.Infrastructure.Services.Email;
+using Syllabus.Infrastructure.Services.File;
 using Syllabus.Util.Options;
 
 
@@ -17,6 +19,7 @@ namespace Syllabus.Infrastructure
         {
             services.Configure<EmailOptions>(configuration.GetSection(EmailOptions.SectionName));
             services.Configure<ConnectionStringOptions>(configuration.GetSection(ConnectionStringOptions.SectionName));
+            services.Configure<FileStorageOptions>(configuration.GetSection(FileStorageOptions.SectionName));
 
             var connectionString = configuration.GetConnectionString("DefaultConnection");
             if (string.IsNullOrWhiteSpace(connectionString))
@@ -30,6 +33,7 @@ namespace Syllabus.Infrastructure
             services.AddScoped<ISyllabusRepository, SyllabusRepository>();
             services.AddScoped<ICourseRepository, CourseRepository>();
             services.AddScoped<IBrevoEmailService, BrevoEmailService>();
+            services.AddScoped<IFileService, LocalFileService>();
         }
     }
 }

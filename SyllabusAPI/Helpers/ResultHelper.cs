@@ -20,7 +20,38 @@ namespace SyllabusAPI.Helpers
             );
         }
 
+        public static IActionResult ToCreatedAtActionResult<T>(this ErrorOr<T> result, ControllerBase controller, string actionName, object routeValues)
+        {
+            return result.Match(
+                success => controller.CreatedAtAction(actionName, routeValues, success),
+                error => controller.Problem(
+                    detail: error.FirstOrDefault().Description,
+                    statusCode: error.FirstOrDefault().Type switch
+                    {
+                        ErrorType.NotFound => StatusCodes.Status404NotFound,
+                        ErrorType.Conflict => StatusCodes.Status409Conflict,
+                        _ => StatusCodes.Status400BadRequest
+                    }
+                )
+            );
+        }
+
         public static IActionResult ToNoContentResult(this ErrorOr<Deleted> result, ControllerBase controller)
+        {
+            return result.Match<IActionResult>(
+                _ => controller.NoContent(),
+                error => controller.Problem(
+                    detail: error.FirstOrDefault().Description,
+                    statusCode: error.FirstOrDefault().Type switch
+                    {
+                        ErrorType.NotFound => StatusCodes.Status404NotFound,
+                        _ => StatusCodes.Status400BadRequest
+                    }
+                )
+            );
+        }
+
+        public static IActionResult ToNoContentResult(this ErrorOr<bool> result, ControllerBase controller)
         {
             return result.Match<IActionResult>(
                 _ => controller.NoContent(),

@@ -25,7 +25,7 @@ namespace Syllabus.Application.Courses.Export
         {
             var course = await _courseRepository.GetByIdAsync(request.CourseId);
             if (course is null)
-                return Error.NotFound("Course.NotFound", "Course with the given ID does not exist.");
+                return CourseErrors.CourseNotFound;
 
             string logoPath = Path.Combine(Directory.GetCurrentDirectory(), _staticFiles.RootPath, "logo.png");
             var document = new CoursePdfDocument(course, logoPath);

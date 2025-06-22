@@ -23,7 +23,7 @@ namespace Syllabus.Application.Syllabus.List
 
             if (syllabuses == null || syllabuses.Count == 0)
             {
-                return Error.NotFound(description: "No syllabuses found.");
+                return SyllabusErrors.SyllabusNotFound;
             }
 
             return new ListAllSyllabusesResponseApiDTO

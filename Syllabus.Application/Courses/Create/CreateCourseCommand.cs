@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using MediatR;
 using Syllabus.ApiContracts.Courses;
+using Syllabus.Application.Syllabus;
 using Syllabus.Domain.Sylabusses;
 
 namespace Syllabus.Application.Courses.Create
@@ -24,7 +25,7 @@ namespace Syllabus.Application.Courses.Create
 
             if (syllabus is null)
             {
-                return Error.NotFound(description: $"Syllabus with ID {request.Request.SyllabusId} not found.");
+                return SyllabusErrors.SyllabusNotFound;
             }
 
             var course = new Course

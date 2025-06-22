@@ -22,12 +22,12 @@ namespace Syllabus.Application.Courses.AddDetail
 
             if (course is null)
             {
-                return Error.NotFound(description: $"Course with ID {request.CourseId} not found.");
+                return CourseErrors.CourseNotFound;
             }
 
             if (course.Detail is not null)
             {
-                return Error.Conflict(description: $"Course with ID {request.CourseId} already has details.");
+                return CourseErrors.CourseDetailAlreadyExists;
             }
 
             var courseDetail = new CourseDetail

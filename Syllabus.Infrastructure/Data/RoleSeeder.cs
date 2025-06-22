@@ -12,7 +12,19 @@ public static class RoleSeeder
             string roleName = role.ToString();
             if (!await roleManager.RoleExistsAsync(roleName))
             {
-                await roleManager.CreateAsync(new IdentityRole(roleName));
+                var result = await roleManager.CreateAsync(new IdentityRole(roleName));
+                if (result.Succeeded)
+                {
+                    Console.WriteLine($"Role '{roleName}' created successfully");
+                }
+                else
+                {
+                    Console.WriteLine($"Failed to create role '{roleName}': {string.Join(", ", result.Errors.Select(e => e.Description))}");
+                }
+            }
+            else
+            {
+                Console.WriteLine($"Role '{roleName}' already exists");
             }
         }
     }
