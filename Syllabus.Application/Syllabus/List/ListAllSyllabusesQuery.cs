@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using MediatR;
 using Syllabus.ApiContracts.Courses;
+using Syllabus.ApiContracts.Programs;
 using Syllabus.ApiContracts.Syllabus;
 using Syllabus.Domain.Sylabusses;
 
@@ -33,6 +34,16 @@ namespace Syllabus.Application.Syllabus.List
                     Id = s.Id,
                     Name = s.Name,
                     AcademicYear = s.AcademicYear,
+                    Program = new ProgramResponseApiDTO
+                    {
+                        Id = s.Program.Id,
+                        Name = s.Program.Name,
+                        Description = s.Program.Description,
+                        DepartmentId = s.Program.DepartmentId,
+                        DepartmentName = s.Program.Department.Name,
+                        CreatedAt = s.Program.CreatedAt,
+                        UpdatedAt = s.Program.UpdatedAt
+                    },
                     Courses = s.Courses.Select(c => new CourseResponseApiDTO
                     {
                         Id = c.Id,

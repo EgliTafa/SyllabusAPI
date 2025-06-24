@@ -20,6 +20,20 @@ namespace Syllabus.Infrastructure.Data.Configuration
                 .IsRequired()
                 .HasMaxLength(20);
 
+            builder.Property(s => s.ProgramId)
+                .IsRequired();
+
+            builder.Property(s => s.CreatedAt)
+                .IsRequired();
+
+            builder.Property(s => s.UpdatedAt);
+
+            // Relationships
+            builder.HasOne(s => s.Program)
+                .WithMany(p => p.Syllabuses)
+                .HasForeignKey(s => s.ProgramId)
+                .OnDelete(DeleteBehavior.Restrict);
+
             //one syllabus has many courses
             builder.HasMany(s => s.Courses)
                    .WithOne()

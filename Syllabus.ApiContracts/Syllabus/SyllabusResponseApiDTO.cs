@@ -1,4 +1,5 @@
 ﻿using Syllabus.ApiContracts.Courses;
+using Syllabus.ApiContracts.Programs;
 using System.Text.Json.Serialization;
 
 namespace Syllabus.ApiContracts.Syllabus
@@ -25,6 +26,12 @@ namespace Syllabus.ApiContracts.Syllabus
         /// </summary>
         [JsonPropertyName("academicYear")]
         public string AcademicYear { get; set; } = default!;
+
+        /// <summary>
+        /// The program this syllabus belongs to.
+        /// </summary>
+        [JsonPropertyName("program")]
+        public ProgramResponseApiDTO Program { get; set; } = default!;
 
         /// <summary>
         /// The list of courses in the syllabus.

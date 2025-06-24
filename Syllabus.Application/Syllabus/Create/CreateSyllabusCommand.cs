@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using MediatR;
 using Syllabus.ApiContracts.Courses;
+using Syllabus.ApiContracts.Programs;
 using Syllabus.ApiContracts.Syllabus;
 using Syllabus.Domain.Sylabusses;
 
@@ -11,18 +12,30 @@ namespace Syllabus.Application.Syllabus.Create
     public class CreateSyllabusCommandHandler : IRequestHandler<CreateSyllabusCommand, ErrorOr<SyllabusResponseApiDTO>>
     {
         private readonly ISyllabusRepository _syllabusRepository;
+        private readonly IProgramRepository _programRepository;
 
-        public CreateSyllabusCommandHandler(ISyllabusRepository syllabusRepository)
+        public CreateSyllabusCommandHandler(
+            ISyllabusRepository syllabusRepository,
+            IProgramRepository programRepository)
         {
             _syllabusRepository = syllabusRepository ?? throw new ArgumentNullException(nameof(syllabusRepository));
+            _programRepository = programRepository ?? throw new ArgumentNullException(nameof(programRepository));
         }
 
         public async Task<ErrorOr<SyllabusResponseApiDTO>> Handle(CreateSyllabusCommand request, CancellationToken cancellationToken)
         {
+            // Validate that the program exists
+            var program = await _programRepository.GetByIdAsync(request.Request.ProgramId);
+            if (program is null)
+            {
+                return SyllabusErrors.ProgramNotFound;
+            }
+
             var syllabus = new Sylabus
             {
                 Name = request.Request.Name,
-                AcademicYear = request.Request.AcademicYear
+                AcademicYear = request.Request.AcademicYear,
+                ProgramId = request.Request.ProgramId
             };
 
             var courses = request.Request.Courses.Select(c => new Course
@@ -77,6 +90,17 @@ namespace Syllabus.Application.Syllabus.Create
             {
                 Id = syllabus.Id,
                 Name = syllabus.Name,
+                AcademicYear = syllabus.AcademicYear,
+                Program = new ProgramResponseApiDTO
+                {
+                    Id = program.Id,
+                    Name = program.Name,
+                    Description = program.Description,
+                    DepartmentId = program.DepartmentId,
+                    DepartmentName = program.Department.Name,
+                    CreatedAt = program.CreatedAt,
+                    UpdatedAt = program.UpdatedAt
+                },
                 Courses = syllabus.Courses.Select(c => new CourseResponseApiDTO
                 {
                     Id = c.Id,

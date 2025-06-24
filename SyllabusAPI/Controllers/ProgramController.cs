@@ -1,0 +1,71 @@
+using MediatR;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Mvc;
+using Syllabus.ApiContracts.Programs;
+using Syllabus.Application.Programs.Create;
+using Syllabus.Application.Programs.Delete;
+using Syllabus.Application.Programs.GetById;
+using Syllabus.Application.Programs.List;
+using Syllabus.Application.Programs.Update;
+using SyllabusAPI.Helpers;
+
+namespace SyllabusAPI.Controllers
+{
+    [ApiController]
+    [Route("api/[controller]")]
+    [Authorize(Roles = "Admin")]
+    public class ProgramController : ControllerBase
+    {
+        private readonly IMediator _mediator;
+
+        public ProgramController(IMediator mediator)
+        {
+            _mediator = mediator;
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Create([FromBody] CreateProgramRequestApiDTO request)
+        {
+            var command = new CreateProgramCommand(request);
+            var result = await _mediator.Send(command);
+
+            return result.ToCreatedAtActionResult(this, nameof(GetById), new { id = result.Value.Id });
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> GetAll()
+        {
+            var query = new GetAllProgramsQuery();
+            var result = await _mediator.Send(query);
+
+            return result.ToActionResult(this);
+        }
+
+        [HttpGet("{id}")]
+        public async Task<IActionResult> GetById(int id)
+        {
+            var query = new GetProgramByIdQuery(id);
+            var result = await _mediator.Send(query);
+
+            return result.ToActionResult(this);
+        }
+
+        [HttpPut]
+        public async Task<IActionResult> Update([FromBody] UpdateProgramRequestApiDTO request)
+        {
+            var command = new UpdateProgramCommand(request);
+            var result = await _mediator.Send(command);
+
+            return result.ToActionResult(this);
+        }
+
+        [HttpDelete("{id}")]
+        public async Task<IActionResult> Delete(int id)
+        {
+            var command = new DeleteProgramCommand(id);
+            var result = await _mediator.Send(command);
+
+            return result.ToNoContentResult(this);
+        }
+    }
+} 

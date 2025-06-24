@@ -28,6 +28,9 @@ public static partial class SyllabusErrors
     public static readonly Error CourseAdditionFailed = Error.Failure("Syllabus.CourseAdditionFailed", "Failed to add course to syllabus.");
     public static readonly Error CourseRemovalFailed = Error.Failure("Syllabus.CourseRemovalFailed", "Failed to remove course from syllabus.");
 
+    // Program errors
+    public static readonly Error ProgramNotFound = Error.NotFound("Syllabus.ProgramNotFound", "Program not found.");
+
     // Validation errors
     public static readonly Error InvalidSyllabusName = Error.Validation("Syllabus.InvalidName", "Invalid syllabus name.");
     public static readonly Error InvalidSyllabusDescription = Error.Validation("Syllabus.InvalidDescription", "Invalid syllabus description.");

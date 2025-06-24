@@ -14,6 +14,7 @@ namespace Syllabus.Util.Options
         
         /// <summary>
         /// The base URL for accessing uploaded files.
+        /// This can be overridden via environment variable FileStorage__BaseUrl
         /// </summary>
         public string BaseUrl { get; set; } = "http://localhost:5000";
         

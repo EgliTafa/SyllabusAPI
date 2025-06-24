@@ -21,6 +21,12 @@ namespace Syllabus.ApiContracts.Syllabus
         public string AcademicYear { get; set; } = string.Empty;
 
         /// <summary>
+        /// The ID of the program this syllabus belongs to.
+        /// </summary>
+        [JsonPropertyName("programId")]
+        public int ProgramId { get; set; }
+
+        /// <summary>
         /// The list of courses included in the syllabus.
         /// </summary>
         [JsonPropertyName("courses")]
