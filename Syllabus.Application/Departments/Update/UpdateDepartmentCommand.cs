@@ -1,7 +1,6 @@
 using ErrorOr;
 using MediatR;
 using Syllabus.ApiContracts.Departments;
-using Syllabus.ApiContracts.Programs;
 using Syllabus.Domain.Sylabusses;
 
 namespace Syllabus.Application.Departments.Update;
@@ -47,17 +46,7 @@ public class UpdateDepartmentCommandHandler
             Name = department.Name,
             Description = department.Description,
             CreatedAt = department.CreatedAt,
-            UpdatedAt = department.UpdatedAt,
-            Programs = department.Programs.Select(p => new ProgramResponseApiDTO
-            {
-                Id = p.Id,
-                Name = p.Name,
-                Description = p.Description,
-                DepartmentId = p.DepartmentId,
-                DepartmentName = department.Name,
-                CreatedAt = p.CreatedAt,
-                UpdatedAt = p.UpdatedAt
-            }).ToList()
+            UpdatedAt = department.UpdatedAt
         };
     }
 } 

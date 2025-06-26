@@ -17,6 +17,10 @@ namespace Syllabus.Infrastructure.Data.Configuration
             builder.Property(p => p.Description)
                 .HasMaxLength(500);
                 
+            builder.Property(p => p.AcademicYear)
+                .IsRequired()
+                .HasMaxLength(20);
+                
             builder.Property(p => p.DepartmentId)
                 .IsRequired();
                 
@@ -38,6 +42,9 @@ namespace Syllabus.Infrastructure.Data.Configuration
                 
             // Indexes
             builder.HasIndex(p => p.Name)
+                .IsUnique();
+                
+            builder.HasIndex(p => new { p.Name, p.AcademicYear })
                 .IsUnique();
         }
     }

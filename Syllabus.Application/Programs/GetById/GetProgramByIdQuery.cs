@@ -30,6 +30,7 @@ public class GetProgramByIdQueryHandler
             Id = program.Id,
             Name = program.Name,
             Description = program.Description,
+            AcademicYear = program.AcademicYear,
             DepartmentId = program.DepartmentId,
             DepartmentName = program.Department.Name,
             CreatedAt = program.CreatedAt,

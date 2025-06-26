@@ -22,12 +22,6 @@ namespace Syllabus.ApiContracts.Syllabus
         public string Name { get; set; } = default!;
 
         /// <summary>
-        /// The academic year for this syllabus (e.g., "2023-2024").
-        /// </summary>
-        [JsonPropertyName("academicYear")]
-        public string AcademicYear { get; set; } = default!;
-
-        /// <summary>
         /// The program this syllabus belongs to.
         /// </summary>
         [JsonPropertyName("program")]

@@ -16,12 +16,7 @@ namespace Syllabus.Infrastructure.Data.Configuration
                 .IsRequired()
                 .HasMaxLength(255);
 
-            builder.Property(s => s.AcademicYear)
-                .IsRequired()
-                .HasMaxLength(20);
-
-            builder.Property(s => s.ProgramId)
-                .IsRequired();
+            builder.Property(s => s.ProgramId);
 
             builder.Property(s => s.CreatedAt)
                 .IsRequired();

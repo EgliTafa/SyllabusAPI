@@ -4,10 +4,10 @@ using Syllabus.Domain.Sylabusses;
 
 namespace Syllabus.Application.Departments.Delete;
 
-public record DeleteDepartmentCommand(int Id) : IRequest<ErrorOr<Deleted>>;
+public record DeleteDepartmentCommand(int Id) : IRequest<ErrorOr<Success>>;
 
 public class DeleteDepartmentCommandHandler
-    : IRequestHandler<DeleteDepartmentCommand, ErrorOr<Deleted>>
+    : IRequestHandler<DeleteDepartmentCommand, ErrorOr<Success>>
 {
     private readonly IDepartmentRepository _departmentRepository;
 
@@ -16,7 +16,7 @@ public class DeleteDepartmentCommandHandler
         _departmentRepository = departmentRepository;
     }
 
-    public async Task<ErrorOr<Deleted>> Handle(DeleteDepartmentCommand request, CancellationToken cancellationToken)
+    public async Task<ErrorOr<Success>> Handle(DeleteDepartmentCommand request, CancellationToken cancellationToken)
     {
         var department = await _departmentRepository.GetByIdAsync(request.Id);
         if (department is null)
@@ -33,6 +33,6 @@ public class DeleteDepartmentCommandHandler
         await _departmentRepository.DeleteAsync(department);
         await _departmentRepository.SaveChangesAsync();
 
-        return Result.Deleted;
+        return Result.Success;
     }
 } 

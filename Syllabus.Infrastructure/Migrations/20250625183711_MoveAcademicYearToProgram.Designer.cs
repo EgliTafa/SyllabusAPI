@@ -12,8 +12,8 @@ using Syllabus.Infrastructure.Data;
 namespace Syllabus.Infrastructure.Migrations
 {
     [DbContext(typeof(SyllabusDbContext))]
-    [Migration("20250624213429_AddDeparmentsAndProgram")]
-    partial class AddDeparmentsAndProgram
+    [Migration("20250625183711_MoveAcademicYearToProgram")]
+    partial class MoveAcademicYearToProgram
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -333,6 +333,11 @@ namespace Syllabus.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<string>("AcademicYear")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -359,6 +364,9 @@ namespace Syllabus.Infrastructure.Migrations
                     b.HasIndex("Name")
                         .IsUnique();
 
+                    b.HasIndex("Name", "AcademicYear")
+                        .IsUnique();
+
                     b.ToTable("Programs");
                 });
 
@@ -370,11 +378,6 @@ namespace Syllabus.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
-                    b.Property<string>("AcademicYear")
-                        .IsRequired()
-                        .HasMaxLength(20)
-                        .HasColumnType("nvarchar(20)");
-
                     b.Property<DateTime>("CreatedAt")
                         .HasColumnType("datetime2");
 
@@ -383,7 +386,7 @@ namespace Syllabus.Infrastructure.Migrations
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
-                    b.Property<int>("ProgramId")
+                    b.Property<int?>("ProgramId")
                         .HasColumnType("int");
 
                     b.Property<DateTime?>("UpdatedAt")
@@ -681,8 +684,7 @@ namespace Syllabus.Infrastructure.Migrations
                     b.HasOne("Syllabus.Domain.Sylabusses.Program", "Program")
                         .WithMany("Syllabuses")
                         .HasForeignKey("ProgramId")
-                        .OnDelete(DeleteBehavior.Restrict)
-                        .IsRequired();
+                        .OnDelete(DeleteBehavior.Restrict);
 
                     b.Navigation("Program");
                 });

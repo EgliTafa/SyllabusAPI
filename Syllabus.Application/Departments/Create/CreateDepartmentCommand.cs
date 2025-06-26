@@ -1,7 +1,6 @@
 using ErrorOr;
 using MediatR;
 using Syllabus.ApiContracts.Departments;
-using Syllabus.ApiContracts.Programs;
 using Syllabus.Domain.Sylabusses;
 
 namespace Syllabus.Application.Departments.Create;
@@ -43,8 +42,7 @@ public class CreateDepartmentCommandHandler
             Name = department.Name,
             Description = department.Description,
             CreatedAt = department.CreatedAt,
-            UpdatedAt = department.UpdatedAt,
-            Programs = new List<ProgramResponseApiDTO>()
+            UpdatedAt = department.UpdatedAt
         };
     }
 } 

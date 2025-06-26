@@ -12,6 +12,11 @@ namespace Syllabus.ApiContracts.Programs
         public string Description { get; set; } = string.Empty;
         
         [Required]
+        [StringLength(20)]
+        [RegularExpression(@"^\d{4}-\d{4}$", ErrorMessage = "Academic year must be in format YYYY-YYYY")]
+        public string AcademicYear { get; set; } = string.Empty;
+        
+        [Required]
         public int DepartmentId { get; set; }
     }
 } 

@@ -22,8 +22,7 @@ namespace Syllabus.Infrastructure.Migrations
                 name: "ProgramId",
                 table: "Syllabuses",
                 type: "int",
-                nullable: false,
-                defaultValue: 0);
+                nullable: true);
 
             migrationBuilder.AddColumn<DateTime>(
                 name: "UpdatedAt",

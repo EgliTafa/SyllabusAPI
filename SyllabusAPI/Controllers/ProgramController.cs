@@ -13,7 +13,7 @@ namespace SyllabusAPI.Controllers
 {
     [ApiController]
     [Route("api/[controller]")]
-    [Authorize(Roles = "Admin")]
+    [Authorize(Roles = "Administrator")]
     public class ProgramController : ControllerBase
     {
         private readonly IMediator _mediator;
@@ -23,21 +23,19 @@ namespace SyllabusAPI.Controllers
             _mediator = mediator;
         }
 
-        [HttpPost]
+        [HttpPost("create")]
         public async Task<IActionResult> Create([FromBody] CreateProgramRequestApiDTO request)
         {
             var command = new CreateProgramCommand(request);
             var result = await _mediator.Send(command);
-
             return result.ToCreatedAtActionResult(this, nameof(GetById), new { id = result.Value.Id });
         }
 
-        [HttpGet]
-        public async Task<IActionResult> GetAll()
+        [HttpGet("list")]
+        public async Task<IActionResult> List()
         {
             var query = new GetAllProgramsQuery();
             var result = await _mediator.Send(query);
-
             return result.ToActionResult(this);
         }
 
@@ -46,16 +44,15 @@ namespace SyllabusAPI.Controllers
         {
             var query = new GetProgramByIdQuery(id);
             var result = await _mediator.Send(query);
-
             return result.ToActionResult(this);
         }
 
-        [HttpPut]
-        public async Task<IActionResult> Update([FromBody] UpdateProgramRequestApiDTO request)
+        [HttpPut("{id}")]
+        public async Task<IActionResult> Update(int id, [FromBody] UpdateProgramRequestApiDTO request)
         {
+            request.Id = id;
             var command = new UpdateProgramCommand(request);
             var result = await _mediator.Send(command);
-
             return result.ToActionResult(this);
         }
 
@@ -64,7 +61,6 @@ namespace SyllabusAPI.Controllers
         {
             var command = new DeleteProgramCommand(id);
             var result = await _mediator.Send(command);
-
             return result.ToNoContentResult(this);
         }
     }

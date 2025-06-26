@@ -33,12 +33,12 @@ namespace Syllabus.Application.Syllabus.List
                 {
                     Id = s.Id,
                     Name = s.Name,
-                    AcademicYear = s.AcademicYear,
                     Program = new ProgramResponseApiDTO
                     {
                         Id = s.Program.Id,
                         Name = s.Program.Name,
                         Description = s.Program.Description,
+                        AcademicYear = s.Program.AcademicYear,
                         DepartmentId = s.Program.DepartmentId,
                         DepartmentName = s.Program.Department.Name,
                         CreatedAt = s.Program.CreatedAt,

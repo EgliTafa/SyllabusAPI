@@ -34,7 +34,6 @@ namespace Syllabus.Application.Syllabus.Create
             var syllabus = new Sylabus
             {
                 Name = request.Request.Name,
-                AcademicYear = request.Request.AcademicYear,
                 ProgramId = request.Request.ProgramId
             };
 
@@ -90,12 +89,12 @@ namespace Syllabus.Application.Syllabus.Create
             {
                 Id = syllabus.Id,
                 Name = syllabus.Name,
-                AcademicYear = syllabus.AcademicYear,
                 Program = new ProgramResponseApiDTO
                 {
                     Id = program.Id,
                     Name = program.Name,
                     Description = program.Description,
+                    AcademicYear = program.AcademicYear,
                     DepartmentId = program.DepartmentId,
                     DepartmentName = program.Department.Name,
                     CreatedAt = program.CreatedAt,

@@ -32,12 +32,12 @@ namespace Syllabus.Application.Syllabus.GetById
             {
                 Id = syllabus.Id,
                 Name = syllabus.Name,
-                AcademicYear = syllabus.AcademicYear,
                 Program = new ProgramResponseApiDTO
                 {
                     Id = syllabus.Program.Id,
                     Name = syllabus.Program.Name,
                     Description = syllabus.Program.Description,
+                    AcademicYear = syllabus.Program.AcademicYear,
                     DepartmentId = syllabus.Program.DepartmentId,
                     DepartmentName = syllabus.Program.Department.Name,
                     CreatedAt = syllabus.Program.CreatedAt,

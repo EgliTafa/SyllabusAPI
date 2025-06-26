@@ -37,15 +37,22 @@ public class UpdateProgramCommandHandler
             return ProgramErrors.DepartmentNotFound;
         }
 
-        // Check if another program with the same name already exists
-        var existingProgram = await _programRepository.GetByNameAsync(request.Request.Name);
+        // Validate academic year format (YYYY-YYYY)
+        if (!IsValidAcademicYearFormat(request.Request.AcademicYear))
+        {
+            return ProgramErrors.InvalidAcademicYearFormat;
+        }
+
+        // Check if another program with same name and academic year already exists
+        var existingProgram = await _programRepository.GetByNameAndAcademicYearAsync(request.Request.Name, request.Request.AcademicYear);
         if (existingProgram != null && existingProgram.Id != request.Request.Id)
         {
-            return ProgramErrors.ProgramNameAlreadyExists;
+            return ProgramErrors.ProgramNameAndYearAlreadyExists;
         }
 
         program.Name = request.Request.Name;
         program.Description = request.Request.Description;
+        program.AcademicYear = request.Request.AcademicYear;
         program.DepartmentId = request.Request.DepartmentId;
         program.UpdatedAt = DateTime.UtcNow;
 
@@ -57,10 +64,27 @@ public class UpdateProgramCommandHandler
             Id = program.Id,
             Name = program.Name,
             Description = program.Description,
+            AcademicYear = program.AcademicYear,
             DepartmentId = program.DepartmentId,
             DepartmentName = department.Name,
             CreatedAt = program.CreatedAt,
             UpdatedAt = program.UpdatedAt
         };
+    }
+
+    private bool IsValidAcademicYearFormat(string academicYear)
+    {
+        if (string.IsNullOrWhiteSpace(academicYear))
+            return false;
+
+        var parts = academicYear.Split('-');
+        if (parts.Length != 2)
+            return false;
+
+        if (!int.TryParse(parts[0], out int startYear) || !int.TryParse(parts[1], out int endYear))
+            return false;
+
+        // Validate that end year is start year + 3 (3-year program)
+        return endYear == startYear + 3;
     }
 } 

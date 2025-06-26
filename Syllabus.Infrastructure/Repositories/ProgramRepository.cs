@@ -46,6 +46,14 @@ namespace Syllabus.Infrastructure.Repositories
                 .FirstOrDefaultAsync(p => p.Name == name);
         }
 
+        public async Task<Program?> GetByNameAndAcademicYearAsync(string name, string academicYear)
+        {
+            return await _context.Programs
+                .Include(p => p.Department)
+                .Include(p => p.Syllabuses)
+                .FirstOrDefaultAsync(p => p.Name == name && p.AcademicYear == academicYear);
+        }
+
         public async Task<Program> AddAsync(Program program)
         {
             await _context.Programs.AddAsync(program);
