@@ -4,12 +4,12 @@
     {
         public int Id { get; set; }
         public string Name { get; set; }
-        public int? ProgramId { get; set; }
+        public int ProgramAcademicYearId { get; set; }
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
         public DateTime? UpdatedAt { get; set; }
         
         // Navigation properties
-        public Program? Program { get; set; }
+        public ProgramAcademicYear ProgramAcademicYear { get; set; } = null!;
         public ICollection<Course> Courses { get; set; } = new List<Course>();
     }
 }

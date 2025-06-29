@@ -14,7 +14,6 @@ namespace Syllabus.Application.Syllabus
 
         // Static info for footer and header
         private const string University = "FAKULTETI I SHKENCAVE TË NATYRËS";
-        private const string Department = "DEPARTAMENTI I INFORMATIKËS";
         private const string Address = "Adresa: Bulevardi 'Zogu I', Nr. 25/1, Tiranë, Tel. & Fax: +355 4 2229560, www.fshn.edu.al";
         private const string Website = "www.fshn.edu.al";
         private const string DepartmentHead = "Prof. Alda Kika";
@@ -66,10 +65,9 @@ namespace Syllabus.Application.Syllabus
             {
                 col.Item().AlignCenter().Height(70).Image(Image.FromFile(_logoPath));
                 col.Item().AlignCenter().Text(University).FontSize(14).Bold();
-                col.Item().AlignCenter().Text(Department).FontSize(12).Bold();
+                col.Item().AlignCenter().Text($"DEPARTAMENTI I {_syllabus.ProgramAcademicYear?.Program?.Department?.Name?.ToUpper() ?? "INFORMATIKËS"}").FontSize(12).Bold();
                 col.Item().AlignCenter().Text($"CIKLI I BACHELOR INFORMATIKË").FontSize(12).Bold();
-                col.Item().AlignCenter().Text($"PROGRAMI I LËNDËS: RRJETAT").FontSize(12).Bold();
-                col.Item().AlignCenter().Text($"VITI AKADEMIK : 2028-2029").FontSize(12).Bold();
+                col.Item().AlignCenter().Text($"PROGRAMI I LËNDËS: {_syllabus.ProgramAcademicYear?.Program?.Name?.ToUpper() ?? ""}").FontSize(12).Bold();
             });
         }
 
@@ -122,8 +120,8 @@ namespace Syllabus.Application.Syllabus
 
                 table.Header(header =>
                 {
-                    header.Cell().ColumnSpan(14).Element(CellStyleHeader).Text($"PROGRAMI I STUDIMIT {(_syllabus.Program?.Name ?? "")}").FontSize(12).Bold().AlignCenter();
-                    header.Cell().ColumnSpan(14).Element(CellStyleHeader).Text($"VITI AKADEMIK {(_syllabus.Program?.AcademicYear ?? "")}").FontSize(11).Bold().AlignCenter();
+                    header.Cell().ColumnSpan(14).Element(CellStyleHeader).Text($"PROGRAMI I STUDIMIT {(_syllabus.ProgramAcademicYear?.Program?.Name ?? "")}").FontSize(12).Bold().AlignCenter();
+                    header.Cell().ColumnSpan(14).Element(CellStyleHeader).Text($"VITI AKADEMIK {(_syllabus.ProgramAcademicYear?.AcademicYear ?? "")}").FontSize(11).Bold().AlignCenter();
                     header.Cell().ColumnSpan(14).Element(CellStyleHeader).Text("");
 
                     header.Cell().RowSpan(3).Element(CellStyleHeader).Text("Nr.");

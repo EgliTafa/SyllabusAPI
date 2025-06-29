@@ -35,14 +35,18 @@ namespace Syllabus.Application.Syllabus.List
                     Name = s.Name,
                     Program = new ProgramResponseApiDTO
                     {
-                        Id = s.Program.Id,
-                        Name = s.Program.Name,
-                        Description = s.Program.Description,
-                        AcademicYear = s.Program.AcademicYear,
-                        DepartmentId = s.Program.DepartmentId,
-                        DepartmentName = s.Program.Department.Name,
-                        CreatedAt = s.Program.CreatedAt,
-                        UpdatedAt = s.Program.UpdatedAt
+                        Id = s.ProgramAcademicYear.Program.Id,
+                        Name = s.ProgramAcademicYear.Program.Name,
+                        Description = s.ProgramAcademicYear.Program.Description,
+                        DepartmentId = s.ProgramAcademicYear.Program.DepartmentId,
+                        DepartmentName = s.ProgramAcademicYear.Program.Department.Name,
+                        CreatedAt = s.ProgramAcademicYear.Program.CreatedAt,
+                        UpdatedAt = s.ProgramAcademicYear.Program.UpdatedAt
+                    },
+                    ProgramAcademicYear = new ProgramAcademicYearDTO
+                    {
+                        Id = s.ProgramAcademicYear.Id,
+                        AcademicYear = s.ProgramAcademicYear.AcademicYear
                     },
                     Courses = s.Courses.Select(c => new CourseResponseApiDTO
                     {

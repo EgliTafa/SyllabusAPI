@@ -28,6 +28,12 @@ namespace Syllabus.ApiContracts.Syllabus
         public ProgramResponseApiDTO Program { get; set; } = default!;
 
         /// <summary>
+        /// The program academic year this syllabus belongs to.
+        /// </summary>
+        [JsonPropertyName("programAcademicYear")]
+        public ProgramAcademicYearDTO ProgramAcademicYear { get; set; } = default!;
+
+        /// <summary>
         /// The list of courses in the syllabus.
         /// </summary>
         [JsonPropertyName("courses")]

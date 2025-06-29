@@ -65,14 +65,18 @@ public class AddOrRemoveCoursesFromSyllabusCommandHandler
             Name = syllabus.Name,
             Program = new ProgramResponseApiDTO
             {
-                Id = syllabus.Program.Id,
-                Name = syllabus.Program.Name,
-                Description = syllabus.Program.Description,
-                AcademicYear = syllabus.Program.AcademicYear,
-                DepartmentId = syllabus.Program.DepartmentId,
-                DepartmentName = syllabus.Program.Department.Name,
-                CreatedAt = syllabus.Program.CreatedAt,
-                UpdatedAt = syllabus.Program.UpdatedAt
+                Id = syllabus.ProgramAcademicYear.Program.Id,
+                Name = syllabus.ProgramAcademicYear.Program.Name,
+                Description = syllabus.ProgramAcademicYear.Program.Description,
+                DepartmentId = syllabus.ProgramAcademicYear.Program.DepartmentId,
+                DepartmentName = syllabus.ProgramAcademicYear.Program.Department.Name,
+                CreatedAt = syllabus.ProgramAcademicYear.Program.CreatedAt,
+                UpdatedAt = syllabus.ProgramAcademicYear.Program.UpdatedAt
+            },
+            ProgramAcademicYear = new ProgramAcademicYearDTO
+            {
+                Id = syllabus.ProgramAcademicYear.Id,
+                AcademicYear = syllabus.ProgramAcademicYear.AcademicYear
             },
             Courses = syllabus.Courses.Select(c => new CourseResponseApiDTO
             {

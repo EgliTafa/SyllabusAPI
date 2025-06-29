@@ -2,6 +2,7 @@ using MediatR;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Syllabus.ApiContracts.Programs;
+using Syllabus.Application.Programs;
 using Syllabus.Application.Programs.Create;
 using Syllabus.Application.Programs.Delete;
 using Syllabus.Application.Programs.GetById;
@@ -34,7 +35,15 @@ namespace SyllabusAPI.Controllers
         [HttpGet("list")]
         public async Task<IActionResult> List()
         {
-            var query = new GetAllProgramsQuery();
+            var query = new ListProgramsQuery();
+            var result = await _mediator.Send(query);
+            return result.ToActionResult(this);
+        }
+
+        [HttpGet("program-academic-years")]
+        public async Task<IActionResult> GetProgramAcademicYears([FromQuery] int? departmentId = null)
+        {
+            var query = new GetProgramAcademicYearsQuery(departmentId);
             var result = await _mediator.Send(query);
             return result.ToActionResult(this);
         }

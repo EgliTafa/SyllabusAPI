@@ -33,9 +33,17 @@ namespace Syllabus.Application.Syllabus.Export
 
             byte[] pdfBytes = document.GeneratePdf();
 
+            // Generate filename with syllabus name, academic year, program, and department
+            var syllabusName = syllabus.Name?.Replace(" ", "_") ?? "Syllabus";
+            var academicYear = syllabus.ProgramAcademicYear?.AcademicYear ?? "";
+            var programName = syllabus.ProgramAcademicYear?.Program?.Name?.Replace(" ", "_") ?? "";
+            var departmentName = syllabus.ProgramAcademicYear?.Program?.Department?.Name?.Replace(" ", "_") ?? "";
+            
+            var fileName = $"{syllabusName}_{academicYear}_{programName}_{departmentName}.pdf";
+
             return new ExportSyllabusPdfResponseApiDTO
             {
-                FileName = $"{syllabus.Name}.pdf",
+                FileName = fileName,
                 ContentType = "application/pdf",
                 FileBytes = pdfBytes
             };

@@ -17,7 +17,8 @@ namespace Syllabus.Infrastructure.Repositories
         {
             return await _context.Programs
                 .Include(p => p.Department)
-                .Include(p => p.Syllabuses)
+                .Include(p => p.AcademicYears)
+                .ThenInclude(ay => ay.Syllabuses)
                 .ToListAsync();
         }
 
@@ -25,7 +26,8 @@ namespace Syllabus.Infrastructure.Repositories
         {
             return await _context.Programs
                 .Include(p => p.Department)
-                .Include(p => p.Syllabuses)
+                .Include(p => p.AcademicYears)
+                .ThenInclude(ay => ay.Syllabuses)
                 .Where(p => p.DepartmentId == departmentId)
                 .ToListAsync();
         }
@@ -34,7 +36,8 @@ namespace Syllabus.Infrastructure.Repositories
         {
             return await _context.Programs
                 .Include(p => p.Department)
-                .Include(p => p.Syllabuses)
+                .Include(p => p.AcademicYears)
+                .ThenInclude(ay => ay.Syllabuses)
                 .FirstOrDefaultAsync(p => p.Id == id);
         }
 
@@ -42,7 +45,8 @@ namespace Syllabus.Infrastructure.Repositories
         {
             return await _context.Programs
                 .Include(p => p.Department)
-                .Include(p => p.Syllabuses)
+                .Include(p => p.AcademicYears)
+                .ThenInclude(ay => ay.Syllabuses)
                 .FirstOrDefaultAsync(p => p.Name == name);
         }
 
@@ -50,8 +54,9 @@ namespace Syllabus.Infrastructure.Repositories
         {
             return await _context.Programs
                 .Include(p => p.Department)
-                .Include(p => p.Syllabuses)
-                .FirstOrDefaultAsync(p => p.Name == name && p.AcademicYear == academicYear);
+                .Include(p => p.AcademicYears)
+                .ThenInclude(ay => ay.Syllabuses)
+                .FirstOrDefaultAsync(p => p.Name == name && p.AcademicYears.Any(ay => ay.AcademicYear == academicYear));
         }
 
         public async Task<Program> AddAsync(Program program)

@@ -52,10 +52,20 @@ public class UpdateProgramCommandHandler
 
         program.Name = request.Request.Name;
         program.Description = request.Request.Description;
-        program.AcademicYear = request.Request.AcademicYear;
         program.DepartmentId = request.Request.DepartmentId;
         program.UpdatedAt = DateTime.UtcNow;
 
+        // Update or add ProgramAcademicYear
+        var existingYear = program.AcademicYears.FirstOrDefault(ay => ay.AcademicYear == request.Request.AcademicYear);
+        if (existingYear == null)
+        {
+            var newYear = new ProgramAcademicYear
+            {
+                ProgramId = program.Id,
+                AcademicYear = request.Request.AcademicYear
+            };
+            program.AcademicYears.Add(newYear);
+        }
         await _programRepository.UpdateAsync(program);
         await _programRepository.SaveChangesAsync();
 
@@ -64,11 +74,15 @@ public class UpdateProgramCommandHandler
             Id = program.Id,
             Name = program.Name,
             Description = program.Description,
-            AcademicYear = program.AcademicYear,
             DepartmentId = program.DepartmentId,
             DepartmentName = department.Name,
             CreatedAt = program.CreatedAt,
-            UpdatedAt = program.UpdatedAt
+            UpdatedAt = program.UpdatedAt,
+            AcademicYears = program.AcademicYears.Select(ay => new ProgramAcademicYearDTO
+            {
+                Id = ay.Id,
+                AcademicYear = ay.AcademicYear
+            }).ToList()
         };
     }
 

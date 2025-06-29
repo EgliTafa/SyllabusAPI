@@ -25,7 +25,7 @@ public class DeleteProgramCommandHandler
         }
 
         // Check if program has syllabuses
-        if (program.Syllabuses.Any())
+        if (program.AcademicYears.Any(ay => ay.Syllabuses.Any()))
         {
             return ProgramErrors.ProgramHasSyllabuses;
         }

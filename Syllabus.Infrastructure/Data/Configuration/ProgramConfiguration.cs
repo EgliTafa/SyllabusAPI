@@ -17,10 +17,6 @@ namespace Syllabus.Infrastructure.Data.Configuration
             builder.Property(p => p.Description)
                 .HasMaxLength(500);
                 
-            builder.Property(p => p.AcademicYear)
-                .IsRequired()
-                .HasMaxLength(20);
-                
             builder.Property(p => p.DepartmentId)
                 .IsRequired();
                 
@@ -35,16 +31,13 @@ namespace Syllabus.Infrastructure.Data.Configuration
                 .HasForeignKey(p => p.DepartmentId)
                 .OnDelete(DeleteBehavior.Restrict);
                 
-            builder.HasMany(p => p.Syllabuses)
-                .WithOne(s => s.Program)
-                .HasForeignKey(s => s.ProgramId)
-                .OnDelete(DeleteBehavior.Restrict);
+            builder.HasMany(p => p.AcademicYears)
+                .WithOne(pay => pay.Program)
+                .HasForeignKey(pay => pay.ProgramId)
+                .OnDelete(DeleteBehavior.Cascade);
                 
             // Indexes
             builder.HasIndex(p => p.Name)
-                .IsUnique();
-                
-            builder.HasIndex(p => new { p.Name, p.AcademicYear })
                 .IsUnique();
         }
     }

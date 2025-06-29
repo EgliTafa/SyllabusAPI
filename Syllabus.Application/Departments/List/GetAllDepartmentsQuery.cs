@@ -37,7 +37,12 @@ public class GetAllDepartmentsQueryHandler
                 DepartmentId = p.DepartmentId,
                 DepartmentName = d.Name,
                 CreatedAt = p.CreatedAt,
-                UpdatedAt = p.UpdatedAt
+                UpdatedAt = p.UpdatedAt,
+                AcademicYears = p.AcademicYears.Select(ay => new ProgramAcademicYearDTO
+                {
+                    Id = ay.Id,
+                    AcademicYear = ay.AcademicYear
+                }).ToList()
             }).ToList()
         }).ToList();
 

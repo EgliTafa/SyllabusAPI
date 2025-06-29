@@ -30,11 +30,15 @@ public class GetProgramByIdQueryHandler
             Id = program.Id,
             Name = program.Name,
             Description = program.Description,
-            AcademicYear = program.AcademicYear,
             DepartmentId = program.DepartmentId,
             DepartmentName = program.Department.Name,
             CreatedAt = program.CreatedAt,
-            UpdatedAt = program.UpdatedAt
+            UpdatedAt = program.UpdatedAt,
+            AcademicYears = program.AcademicYears.Select(ay => new ProgramAcademicYearDTO
+            {
+                Id = ay.Id,
+                AcademicYear = ay.AcademicYear
+            }).ToList()
         };
     }
 } 

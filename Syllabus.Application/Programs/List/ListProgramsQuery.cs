@@ -25,11 +25,15 @@ namespace Syllabus.Application.Programs.List
                 Id = p.Id,
                 Name = p.Name,
                 Description = p.Description,
-                AcademicYear = p.AcademicYear,
                 DepartmentId = p.DepartmentId,
                 DepartmentName = p.Department.Name,
                 CreatedAt = p.CreatedAt,
-                UpdatedAt = p.UpdatedAt
+                UpdatedAt = p.UpdatedAt,
+                AcademicYears = p.AcademicYears.Select(ay => new ProgramAcademicYearDTO
+                {
+                    Id = ay.Id,
+                    AcademicYear = ay.AcademicYear
+                }).ToList()
             }).ToList();
 
             return response;

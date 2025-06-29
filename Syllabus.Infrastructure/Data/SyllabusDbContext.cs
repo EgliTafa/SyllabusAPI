@@ -15,6 +15,7 @@ namespace Syllabus.Infrastructure.Data
 
         public virtual DbSet<Department> Departments { get; set; }
         public virtual DbSet<Program> Programs { get; set; }
+        public virtual DbSet<ProgramAcademicYear> ProgramAcademicYears { get; set; }
         public virtual DbSet<Sylabus> Syllabuses { get; set; }
         public virtual DbSet<Course> Courses { get; set; }
         public virtual DbSet<CourseDetail> CourseDetails { get; set; }

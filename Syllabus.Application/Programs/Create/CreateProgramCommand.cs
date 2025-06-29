@@ -48,11 +48,19 @@ public class CreateProgramCommandHandler
         {
             Name = request.Request.Name,
             Description = request.Request.Description,
-            AcademicYear = request.Request.AcademicYear,
             DepartmentId = request.Request.DepartmentId
         };
 
         await _programRepository.AddAsync(program);
+        await _programRepository.SaveChangesAsync();
+
+        // Create ProgramAcademicYear
+        var academicYear = new ProgramAcademicYear
+        {
+            ProgramId = program.Id,
+            AcademicYear = request.Request.AcademicYear
+        };
+        program.AcademicYears.Add(academicYear);
         await _programRepository.SaveChangesAsync();
 
         return new ProgramResponseApiDTO
@@ -60,11 +68,15 @@ public class CreateProgramCommandHandler
             Id = program.Id,
             Name = program.Name,
             Description = program.Description,
-            AcademicYear = program.AcademicYear,
             DepartmentId = program.DepartmentId,
             DepartmentName = department.Name,
             CreatedAt = program.CreatedAt,
-            UpdatedAt = program.UpdatedAt
+            UpdatedAt = program.UpdatedAt,
+            AcademicYears = program.AcademicYears.Select(ay => new ProgramAcademicYearDTO
+            {
+                Id = ay.Id,
+                AcademicYear = ay.AcademicYear
+            }).ToList()
         };
     }
 
