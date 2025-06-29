@@ -66,6 +66,22 @@ namespace SyllabusAPI.Helpers
             );
         }
 
+        public static IActionResult ToNoContentResult(this ErrorOr<Success> result, ControllerBase controller)
+        {
+            return result.Match<IActionResult>(
+                _ => controller.NoContent(),
+                error => controller.Problem(
+                    detail: error.FirstOrDefault().Description,
+                    statusCode: error.FirstOrDefault().Type switch
+                    {
+                        ErrorType.NotFound => StatusCodes.Status404NotFound,
+                        ErrorType.Conflict => StatusCodes.Status409Conflict,
+                        _ => StatusCodes.Status400BadRequest
+                    }
+                )
+            );
+        }
+
         public static IActionResult ToProblemResult<T>(this ErrorOr<T> result, ControllerBase controller)
         {
             if (result.IsError)

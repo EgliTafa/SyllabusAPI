@@ -1,4 +1,5 @@
 ﻿using Syllabus.ApiContracts.Courses;
+using Syllabus.ApiContracts.Programs;
 using System.Text.Json.Serialization;
 
 namespace Syllabus.ApiContracts.Syllabus
@@ -21,10 +22,16 @@ namespace Syllabus.ApiContracts.Syllabus
         public string Name { get; set; } = default!;
 
         /// <summary>
-        /// The academic year for this syllabus (e.g., "2023-2024").
+        /// The program this syllabus belongs to.
         /// </summary>
-        [JsonPropertyName("academicYear")]
-        public string AcademicYear { get; set; } = default!;
+        [JsonPropertyName("program")]
+        public ProgramResponseApiDTO Program { get; set; } = default!;
+
+        /// <summary>
+        /// The program academic year this syllabus belongs to.
+        /// </summary>
+        [JsonPropertyName("programAcademicYear")]
+        public ProgramAcademicYearDTO ProgramAcademicYear { get; set; } = default!;
 
         /// <summary>
         /// The list of courses in the syllabus.

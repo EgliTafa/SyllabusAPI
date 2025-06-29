@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using MediatR;
 using Syllabus.ApiContracts.Courses;
+using Syllabus.ApiContracts.Programs;
 using Syllabus.ApiContracts.Syllabus;
 using Syllabus.Domain.Sylabusses;
 
@@ -26,14 +27,27 @@ public class UpdateSyllabusCommandHandler : IRequestHandler<UpdateSyllabusComman
         }
 
         syllabus.Name = request.Request.Name;
-        syllabus.AcademicYear = request.Request.AcademicYear;
         await _syllabusRepository.SaveChangesAsync();
 
         return new SyllabusResponseApiDTO
         {
             Id = syllabus.Id,
             Name = syllabus.Name,
-            AcademicYear = syllabus.AcademicYear,
+            Program = new ProgramResponseApiDTO
+            {
+                Id = syllabus.ProgramAcademicYear.Program.Id,
+                Name = syllabus.ProgramAcademicYear.Program.Name,
+                Description = syllabus.ProgramAcademicYear.Program.Description,
+                DepartmentId = syllabus.ProgramAcademicYear.Program.DepartmentId,
+                DepartmentName = syllabus.ProgramAcademicYear.Program.Department.Name,
+                CreatedAt = syllabus.ProgramAcademicYear.Program.CreatedAt,
+                UpdatedAt = syllabus.ProgramAcademicYear.Program.UpdatedAt
+            },
+            ProgramAcademicYear = new ProgramAcademicYearDTO
+            {
+                Id = syllabus.ProgramAcademicYear.Id,
+                AcademicYear = syllabus.ProgramAcademicYear.AcademicYear
+            },
             Courses = syllabus.Courses.Select(c => new CourseResponseApiDTO
             {
                 Id = c.Id,

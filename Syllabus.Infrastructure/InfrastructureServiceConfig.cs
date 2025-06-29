@@ -32,6 +32,8 @@ namespace Syllabus.Infrastructure
 
             services.AddScoped<ISyllabusRepository, SyllabusRepository>();
             services.AddScoped<ICourseRepository, CourseRepository>();
+            services.AddScoped<IDepartmentRepository, DepartmentRepository>();
+            services.AddScoped<IProgramRepository, ProgramRepository>();
             services.AddScoped<IBrevoEmailService, BrevoEmailService>();
             services.AddScoped<IFileService, LocalFileService>();
         }

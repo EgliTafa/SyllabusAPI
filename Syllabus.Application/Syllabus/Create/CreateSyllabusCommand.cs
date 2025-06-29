@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using MediatR;
 using Syllabus.ApiContracts.Courses;
+using Syllabus.ApiContracts.Programs;
 using Syllabus.ApiContracts.Syllabus;
 using Syllabus.Domain.Sylabusses;
 
@@ -11,10 +12,14 @@ namespace Syllabus.Application.Syllabus.Create
     public class CreateSyllabusCommandHandler : IRequestHandler<CreateSyllabusCommand, ErrorOr<SyllabusResponseApiDTO>>
     {
         private readonly ISyllabusRepository _syllabusRepository;
+        private readonly IProgramRepository _programRepository;
 
-        public CreateSyllabusCommandHandler(ISyllabusRepository syllabusRepository)
+        public CreateSyllabusCommandHandler(
+            ISyllabusRepository syllabusRepository,
+            IProgramRepository programRepository)
         {
             _syllabusRepository = syllabusRepository ?? throw new ArgumentNullException(nameof(syllabusRepository));
+            _programRepository = programRepository ?? throw new ArgumentNullException(nameof(programRepository));
         }
 
         public async Task<ErrorOr<SyllabusResponseApiDTO>> Handle(CreateSyllabusCommand request, CancellationToken cancellationToken)
@@ -22,7 +27,7 @@ namespace Syllabus.Application.Syllabus.Create
             var syllabus = new Sylabus
             {
                 Name = request.Request.Name,
-                AcademicYear = request.Request.AcademicYear
+                ProgramAcademicYearId = request.Request.ProgramAcademicYearId
             };
 
             var courses = request.Request.Courses.Select(c => new Course
@@ -77,6 +82,26 @@ namespace Syllabus.Application.Syllabus.Create
             {
                 Id = syllabus.Id,
                 Name = syllabus.Name,
+                Program = new ProgramResponseApiDTO
+                {
+                    Id = syllabus.ProgramAcademicYear.Program.Id,
+                    Name = syllabus.ProgramAcademicYear.Program.Name,
+                    Description = syllabus.ProgramAcademicYear.Program.Description,
+                    DepartmentId = syllabus.ProgramAcademicYear.Program.DepartmentId,
+                    DepartmentName = syllabus.ProgramAcademicYear.Program.Department.Name,
+                    CreatedAt = syllabus.ProgramAcademicYear.Program.CreatedAt,
+                    UpdatedAt = syllabus.ProgramAcademicYear.Program.UpdatedAt,
+                    AcademicYears = syllabus.ProgramAcademicYear.Program.AcademicYears.Select(ay => new ProgramAcademicYearDTO
+                    {
+                        Id = ay.Id,
+                        AcademicYear = ay.AcademicYear
+                    }).ToList()
+                },
+                ProgramAcademicYear = new ProgramAcademicYearDTO
+                {
+                    Id = syllabus.ProgramAcademicYear.Id,
+                    AcademicYear = syllabus.ProgramAcademicYear.AcademicYear
+                },
                 Courses = syllabus.Courses.Select(c => new CourseResponseApiDTO
                 {
                     Id = c.Id,

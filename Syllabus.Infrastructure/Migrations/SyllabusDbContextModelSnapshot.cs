@@ -290,7 +290,76 @@ namespace Syllabus.Infrastructure.Migrations
                     b.ToTable("CourseDetails", (string)null);
                 });
 
-            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Sylabus", b =>
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Department", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Program", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Programs");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.ProgramAcademicYear", b =>
                 {
                     b.Property<int>("Id")
                         .ValueGeneratedOnAdd()
@@ -303,12 +372,42 @@ namespace Syllabus.Infrastructure.Migrations
                         .HasMaxLength(20)
                         .HasColumnType("nvarchar(20)");
 
+                    b.Property<int>("ProgramId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProgramId", "AcademicYear")
+                        .IsUnique();
+
+                    b.ToTable("ProgramAcademicYears");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Sylabus", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
+                    b.Property<int>("ProgramAcademicYearId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
                     b.HasKey("Id");
+
+                    b.HasIndex("ProgramAcademicYearId");
 
                     b.ToTable("Syllabuses", (string)null);
                 });
@@ -582,6 +681,39 @@ namespace Syllabus.Infrastructure.Migrations
                         .IsRequired();
                 });
 
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Program", b =>
+                {
+                    b.HasOne("Syllabus.Domain.Sylabusses.Department", "Department")
+                        .WithMany("Programs")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.ProgramAcademicYear", b =>
+                {
+                    b.HasOne("Syllabus.Domain.Sylabusses.Program", "Program")
+                        .WithMany("AcademicYears")
+                        .HasForeignKey("ProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Program");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Sylabus", b =>
+                {
+                    b.HasOne("Syllabus.Domain.Sylabusses.ProgramAcademicYear", "ProgramAcademicYear")
+                        .WithMany("Syllabuses")
+                        .HasForeignKey("ProgramAcademicYearId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ProgramAcademicYear");
+                });
+
             modelBuilder.Entity("Syllabus.Domain.Sylabusses.Topic", b =>
                 {
                     b.HasOne("Syllabus.Domain.Sylabusses.CourseDetail", "CourseDetail")
@@ -636,6 +768,21 @@ namespace Syllabus.Infrastructure.Migrations
             modelBuilder.Entity("Syllabus.Domain.Sylabusses.CourseDetail", b =>
                 {
                     b.Navigation("Topics");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Department", b =>
+                {
+                    b.Navigation("Programs");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Program", b =>
+                {
+                    b.Navigation("AcademicYears");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.ProgramAcademicYear", b =>
+                {
+                    b.Navigation("Syllabuses");
                 });
 
             modelBuilder.Entity("Syllabus.Domain.Sylabusses.Sylabus", b =>

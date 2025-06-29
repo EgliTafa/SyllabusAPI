@@ -20,6 +20,9 @@ namespace Syllabus.Infrastructure.Repositories
         public async ValueTask<List<Sylabus>> GetAllAsync()
         {
             return await _context.Syllabuses
+                .Include(s => s.ProgramAcademicYear)
+                    .ThenInclude(pay => pay.Program)
+                        .ThenInclude(p => p.Department)
                 .Include(s => s.Courses)
                     .ThenInclude(c => c.Detail)
                         .ThenInclude(d => d!.Topics)
@@ -29,6 +32,9 @@ namespace Syllabus.Infrastructure.Repositories
         public async ValueTask<Sylabus?> GetByIdAsync(int id)
         {
             return await _context.Syllabuses
+                .Include(s => s.ProgramAcademicYear)
+                    .ThenInclude(pay => pay.Program)
+                        .ThenInclude(p => p.Department)
                 .Include(s => s.Courses)
                     .ThenInclude(c => c.Detail)
                         .ThenInclude(d => d!.Topics)
