@@ -3,16 +3,25 @@ using brevo_csharp.Model;
 using Microsoft.Extensions.Options;
 using Syllabus.Domain.Services.Email;
 using Syllabus.Util.Options;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Syllabus.Infrastructure.Services.Email
 {
     public class BrevoEmailService : IBrevoEmailService
     {
         private readonly EmailOptions _emailOptions;
+        private readonly string _wwwrootPath;
+        private static string? _resetPasswordTemplate;
+        private static string? _emailConfirmationTemplate;
+        private ILogger<BrevoEmailService> _logger;
 
-        public BrevoEmailService(IOptions<EmailOptions> emailOptions)
+        public BrevoEmailService(IOptions<EmailOptions> emailOptions, IHostEnvironment env, ILogger<BrevoEmailService> logger)
         {
             _emailOptions = emailOptions.Value ?? throw new ArgumentNullException(nameof(emailOptions));
+            // Use the content root path to find wwwroot in all environments
+            _wwwrootPath = Path.Combine(env.ContentRootPath, "SyllabusAPI", "wwwroot");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
         public async ValueTask SendPasswordResetEmailAsync(string toEmail, string resetToken)
@@ -75,8 +84,9 @@ namespace Syllabus.Infrastructure.Services.Email
                 await apiInstance.SendTransacEmailAsync(sendSmtpEmail);
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex, "Failed to send email confirmation to {Email}", toEmail);
                 return false;
             }
         }
