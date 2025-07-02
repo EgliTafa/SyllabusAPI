@@ -11,9 +11,13 @@ using System.Reflection;
 
 var builder = WebApplication.CreateBuilder(args);
 
+Console.WriteLine("Starting Syllabus API configuration...");
+
 builder.Services.AddIdentity<UserEntity, IdentityRole>()
     .AddEntityFrameworkStores<SyllabusDbContext>()
     .AddDefaultTokenProviders();
+
+Console.WriteLine("Identity services configured...");
 
 builder.Configuration
     .SetBasePath(Directory.GetCurrentDirectory())
@@ -22,9 +26,13 @@ builder.Configuration
     .AddEnvironmentVariables();
 
 builder.Services.AddInfrastructureServices(builder.Configuration);
-builder.Services.ConfigureApplicationServices(builder.Configuration);
-builder.Services.AddSyllabusAuthentication(builder.Configuration);
+Console.WriteLine("Infrastructure services configured...");
 
+builder.Services.ConfigureApplicationServices(builder.Configuration);
+Console.WriteLine("Application services configured...");
+
+builder.Services.AddSyllabusAuthentication(builder.Configuration);
+Console.WriteLine("Authentication services configured...");
 
 builder.Services.AddCors(options =>
 {
@@ -94,9 +102,12 @@ builder.Services.AddSwaggerExamplesFromAssemblyOf<Program>();
 
 var app = builder.Build();
 
+Console.WriteLine("Application built successfully...");
+
 // Seed roles
 using (var scope = app.Services.CreateScope())
 {
+    Console.WriteLine("Starting database seeding...");
     var roleManager = scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
     await RoleSeeder.SeedRolesAsync(roleManager);
 
@@ -137,11 +148,34 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
+Console.WriteLine("Database seeding completed...");
+
+// Ensure wwwroot/uploads directory exists
+var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads");
+if (!Directory.Exists(uploadsPath))
+{
+    Directory.CreateDirectory(uploadsPath);
+    Console.WriteLine($"Created uploads directory: {uploadsPath}");
+}
+else
+{
+    Console.WriteLine($"Uploads directory already exists: {uploadsPath}");
+}
+
 app.UseSwagger();
 app.UseSwaggerUI(c =>
 {
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Syllabus API v1");
     //c.RoutePrefix = string.Empty; // serve at root
+});
+
+// Serve static files from wwwroot/uploads
+app.UseStaticFiles();
+app.UseStaticFiles(new StaticFileOptions
+{
+    FileProvider = new Microsoft.Extensions.FileProviders.PhysicalFileProvider(
+        Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads")),
+    RequestPath = "/uploads"
 });
 
 app.MapGet("/", context =>
@@ -160,4 +194,8 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
+
+Console.WriteLine("Middleware configured, starting application...");
+
+Console.WriteLine("Starting Syllabus API...");
 app.Run();

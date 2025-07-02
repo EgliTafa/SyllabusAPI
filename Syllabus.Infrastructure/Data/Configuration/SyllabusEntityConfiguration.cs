@@ -16,9 +16,18 @@ namespace Syllabus.Infrastructure.Data.Configuration
                 .IsRequired()
                 .HasMaxLength(255);
 
-            builder.Property(s => s.AcademicYear)
-                .IsRequired()
-                .HasMaxLength(20);
+            builder.Property(s => s.ProgramAcademicYearId);
+
+            builder.Property(s => s.CreatedAt)
+                .IsRequired();
+
+            builder.Property(s => s.UpdatedAt);
+
+            // Relationships
+            builder.HasOne(s => s.ProgramAcademicYear)
+                .WithMany(pay => pay.Syllabuses)
+                .HasForeignKey(s => s.ProgramAcademicYearId)
+                .OnDelete(DeleteBehavior.Restrict);
 
             //one syllabus has many courses
             builder.HasMany(s => s.Courses)

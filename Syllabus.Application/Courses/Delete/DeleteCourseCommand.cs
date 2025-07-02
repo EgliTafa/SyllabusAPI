@@ -22,7 +22,7 @@ namespace Syllabus.Application.Courses.Delete
 
             if (course is null)
             {
-                return Error.NotFound(description: $"Course with ID {request.Request.CourseId} not found.");
+                return CourseErrors.CourseNotFound;
             }
 
             _courseRepository.Remove(course);

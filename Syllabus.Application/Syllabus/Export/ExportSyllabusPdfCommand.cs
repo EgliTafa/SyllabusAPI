@@ -26,16 +26,24 @@ namespace Syllabus.Application.Syllabus.Export
         {
             Sylabus? syllabus = await _syllabusRepository.GetByIdAsync(request.Request.SyllabusId);
             if (syllabus is null)
-                return Error.NotFound("Syllabus.NotFound", "Syllabus with the given ID does not exist.");
+                return SyllabusErrors.SyllabusNotFound;
 
             string logoPath = Path.Combine(Directory.GetCurrentDirectory(), _staticFiles.RootPath, "logo.png");
             SyllabusPdfDocument document = new SyllabusPdfDocument(syllabus, logoPath);
 
             byte[] pdfBytes = document.GeneratePdf();
 
+            // Generate filename with syllabus name, academic year, program, and department
+            var syllabusName = syllabus.Name?.Replace(" ", "_") ?? "Syllabus";
+            var academicYear = syllabus.ProgramAcademicYear?.AcademicYear ?? "";
+            var programName = syllabus.ProgramAcademicYear?.Program?.Name?.Replace(" ", "_") ?? "";
+            var departmentName = syllabus.ProgramAcademicYear?.Program?.Department?.Name?.Replace(" ", "_") ?? "";
+            
+            var fileName = $"{syllabusName}_{academicYear}_{programName}_{departmentName}.pdf";
+
             return new ExportSyllabusPdfResponseApiDTO
             {
-                FileName = $"{syllabus.Name}.pdf",
+                FileName = fileName,
                 ContentType = "application/pdf",
                 FileBytes = pdfBytes
             };

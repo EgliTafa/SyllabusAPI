@@ -15,5 +15,10 @@ namespace Syllabus.Domain.Users
         public string? ProfilePictureUrl { get; set; }
 
         public UserStatus Status { get; set; } = UserStatus.Active;
+
+        /// <summary>
+        /// The reason for the user's lockout (if applicable).
+        /// </summary>
+        public string? LockoutReason { get; set; }
     }
 }

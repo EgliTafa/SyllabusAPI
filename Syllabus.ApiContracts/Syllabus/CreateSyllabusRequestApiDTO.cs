@@ -15,10 +15,10 @@ namespace Syllabus.ApiContracts.Syllabus
         public string Name { get; set; } = string.Empty;
 
         /// <summary>
-        /// The academic year for this syllabus (e.g., "2023-2024").
+        /// The ID of the program academic year this syllabus belongs to.
         /// </summary>
-        [JsonPropertyName("academicYear")]
-        public string AcademicYear { get; set; } = string.Empty;
+        [JsonPropertyName("programAcademicYearId")]
+        public int ProgramAcademicYearId { get; set; }
 
         /// <summary>
         /// The list of courses included in the syllabus.

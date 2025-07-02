@@ -7,9 +7,9 @@ using Syllabus.Application.Syllabus.Delete;
 using Syllabus.Application.Syllabus.Export;
 using Syllabus.Application.Syllabus.GetById;
 using Syllabus.Application.Syllabus.List;
+using Syllabus.Application.Syllabus.Update;
 using Syllabus.Domain.Users;
 using SyllabusAPI.Helpers;
-using SyllabusApplication.Syllabuses.Commands;
 
 namespace SyllabusAPI.Controllers
 {

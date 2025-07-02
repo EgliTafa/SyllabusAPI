@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Identity;
 using Syllabus.ApiContracts.Authentication;
 using Syllabus.Domain.Services.Email;
 using Syllabus.Domain.Users;
+using Syllabus.Application.Authentication;
 
 namespace Syllabus.Application.Authentication.ForgetAndReset
 {
@@ -26,12 +27,12 @@ namespace Syllabus.Application.Authentication.ForgetAndReset
 
             if (string.IsNullOrWhiteSpace(request.Email))
             {
-                return Error.Validation("Email is required.");
+                return AuthenticationErrors.EmailRequired;
             }
 
             if (!EmailValidator.IsValid(request.Email))
             {
-                return Error.Validation("Invalid email format.");
+                return AuthenticationErrors.InvalidEmailFormat;
             }
 
             var user = await _userManager.FindByEmailAsync(request.Email);

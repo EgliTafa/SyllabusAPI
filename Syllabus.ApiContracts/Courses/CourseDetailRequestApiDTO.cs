@@ -9,7 +9,7 @@ namespace Syllabus.ApiContracts.Courses
     public class CourseDetailRequestApiDTO
     {
         /// <summary>
-        /// The academic program this course belongs to.
+        /// The academic program this course belongs to
         /// </summary>
         [JsonPropertyName("academicProgram")]
         public string AcademicProgram { get; set; } = default!;

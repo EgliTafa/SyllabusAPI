@@ -34,6 +34,7 @@ namespace Syllabus.ApiContracts.Authentication
         /// <summary>
         /// The prefix of the phone number (e.g., +355).
         /// </summary>
+        [JsonPropertyName("phonePrefix")]
         public string PhonePrefix { get; set; } = string.Empty;
 
         /// <summary>

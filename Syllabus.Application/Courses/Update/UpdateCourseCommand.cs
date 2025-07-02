@@ -22,7 +22,7 @@ namespace Syllabus.Application.Courses.Update
 
             if (course is null)
             {
-                return Error.NotFound(description: $"Course with ID {request.Request.CourseId} not found.");
+                return CourseErrors.CourseNotFound;
             }
 
             course.Title = request.Request.Title;

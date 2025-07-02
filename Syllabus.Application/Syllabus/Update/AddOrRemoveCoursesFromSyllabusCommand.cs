@@ -1,10 +1,11 @@
 ﻿using ErrorOr;
 using MediatR;
 using Syllabus.ApiContracts.Courses;
+using Syllabus.ApiContracts.Programs;
 using Syllabus.ApiContracts.Syllabus;
 using Syllabus.Domain.Sylabusses;
 
-namespace SyllabusApplication.Syllabuses.Commands;
+namespace Syllabus.Application.Syllabus.Update;
 
 public record AddOrRemoveCoursesFromSyllabusCommand(AddOrRemoveCoursesFromSyllabusRequestApiDTO Request)
     : IRequest<ErrorOr<SyllabusResponseApiDTO>>;
@@ -28,7 +29,7 @@ public class AddOrRemoveCoursesFromSyllabusCommandHandler
         var syllabus = await _syllabusRepository.GetByIdAsync(request.Request.SyllabusId);
         if (syllabus is null)
         {
-            return Error.NotFound(description: $"Syllabus with ID {request.Request.SyllabusId} not found.");
+            return SyllabusErrors.SyllabusNotFound;
         }
 
         if (request.Request.CourseIdsToRemove.Any())
@@ -62,33 +63,29 @@ public class AddOrRemoveCoursesFromSyllabusCommandHandler
         {
             Id = syllabus.Id,
             Name = syllabus.Name,
+            Program = new ProgramResponseApiDTO
+            {
+                Id = syllabus.ProgramAcademicYear.Program.Id,
+                Name = syllabus.ProgramAcademicYear.Program.Name,
+                Description = syllabus.ProgramAcademicYear.Program.Description,
+                DepartmentId = syllabus.ProgramAcademicYear.Program.DepartmentId,
+                DepartmentName = syllabus.ProgramAcademicYear.Program.Department.Name,
+                CreatedAt = syllabus.ProgramAcademicYear.Program.CreatedAt,
+                UpdatedAt = syllabus.ProgramAcademicYear.Program.UpdatedAt
+            },
+            ProgramAcademicYear = new ProgramAcademicYearDTO
+            {
+                Id = syllabus.ProgramAcademicYear.Id,
+                AcademicYear = syllabus.ProgramAcademicYear.AcademicYear
+            },
             Courses = syllabus.Courses.Select(c => new CourseResponseApiDTO
             {
                 Id = c.Id,
                 Title = c.Title,
                 Code = c.Code,
-                Year = c.Year,
                 Semester = c.Semester,
                 Credits = c.Credits,
-                LectureHours = c.LectureHours,
-                SeminarHours = c.SeminarHours,
-                LabHours = c.LabHours,
-                PracticeHours = c.PracticeHours,
-                ElectiveGroup = c.ElectiveGroup,
-                AcademicProgram = c.Detail?.AcademicProgram,
-                AcademicYear = c.Detail?.AcademicYear,
-                Language = c.Detail?.Language,
-                CourseTypeLabel = c.Detail?.CourseTypeLabel,
-                EthicsCode = c.Detail?.EthicsCode,
-                ExamMethod = c.Detail?.ExamMethod,
-                TeachingFormat = c.Detail?.TeachingFormat,
-                TeachingPlan = c.Detail?.TeachingPlan,
-                EvaluationBreakdown = c.Detail?.EvaluationBreakdown,
                 Objective = c.Detail?.Objective,
-                KeyConcepts = c.Detail?.KeyConcepts,
-                Prerequisites = c.Detail?.Prerequisites,
-                SkillsAcquired = c.Detail?.SkillsAcquired,
-                CourseResponsible = c.Detail?.CourseResponsible,
                 Topics = c.Detail?.Topics?.Select(t => new TopicResponseApiDTO
                 {
                     Title = t.Title,

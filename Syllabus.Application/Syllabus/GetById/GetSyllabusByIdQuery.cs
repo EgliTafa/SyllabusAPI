@@ -1,8 +1,10 @@
 ﻿using ErrorOr;
 using MediatR;
 using Syllabus.ApiContracts.Courses;
+using Syllabus.ApiContracts.Programs;
 using Syllabus.ApiContracts.Syllabus;
 using Syllabus.Domain.Sylabusses;
+using SyllabusErrors = Syllabus.Application.Syllabus.SyllabusErrors;
 
 namespace Syllabus.Application.Syllabus.GetById
 {
@@ -23,14 +25,33 @@ namespace Syllabus.Application.Syllabus.GetById
 
             if (syllabus is null)
             {
-                return Error.NotFound(description: $"Syllabus with ID {request.Request.SyllabusId} not found.");
+                return SyllabusErrors.SyllabusNotFound;
             }
 
             return new SyllabusResponseApiDTO
             {
                 Id = syllabus.Id,
                 Name = syllabus.Name,
-                AcademicYear = syllabus.AcademicYear,
+                Program = new ProgramResponseApiDTO
+                {
+                    Id = syllabus.ProgramAcademicYear.Program.Id,
+                    Name = syllabus.ProgramAcademicYear.Program.Name,
+                    Description = syllabus.ProgramAcademicYear.Program.Description,
+                    DepartmentId = syllabus.ProgramAcademicYear.Program.DepartmentId,
+                    DepartmentName = syllabus.ProgramAcademicYear.Program.Department.Name,
+                    CreatedAt = syllabus.ProgramAcademicYear.Program.CreatedAt,
+                    UpdatedAt = syllabus.ProgramAcademicYear.Program.UpdatedAt,
+                    AcademicYears = syllabus.ProgramAcademicYear.Program.AcademicYears.Select(ay => new ProgramAcademicYearDTO
+                    {
+                        Id = ay.Id,
+                        AcademicYear = ay.AcademicYear
+                    }).ToList()
+                },
+                ProgramAcademicYear = new ProgramAcademicYearDTO
+                {
+                    Id = syllabus.ProgramAcademicYear.Id,
+                    AcademicYear = syllabus.ProgramAcademicYear.AcademicYear
+                },
                 Courses = syllabus.Courses.Select(c => new CourseResponseApiDTO
                 {
                     Id = c.Id,

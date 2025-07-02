@@ -1,6 +1,7 @@
 ﻿using ErrorOr;
 using MediatR;
 using Syllabus.ApiContracts.Courses;
+using Syllabus.ApiContracts.Programs;
 using Syllabus.ApiContracts.Syllabus;
 using Syllabus.Domain.Sylabusses;
 
@@ -23,7 +24,7 @@ namespace Syllabus.Application.Syllabus.List
 
             if (syllabuses == null || syllabuses.Count == 0)
             {
-                return Error.NotFound(description: "No syllabuses found.");
+                return SyllabusErrors.SyllabusNotFound;
             }
 
             return new ListAllSyllabusesResponseApiDTO
@@ -32,7 +33,21 @@ namespace Syllabus.Application.Syllabus.List
                 {
                     Id = s.Id,
                     Name = s.Name,
-                    AcademicYear = s.AcademicYear,
+                    Program = new ProgramResponseApiDTO
+                    {
+                        Id = s.ProgramAcademicYear.Program.Id,
+                        Name = s.ProgramAcademicYear.Program.Name,
+                        Description = s.ProgramAcademicYear.Program.Description,
+                        DepartmentId = s.ProgramAcademicYear.Program.DepartmentId,
+                        DepartmentName = s.ProgramAcademicYear.Program.Department.Name,
+                        CreatedAt = s.ProgramAcademicYear.Program.CreatedAt,
+                        UpdatedAt = s.ProgramAcademicYear.Program.UpdatedAt
+                    },
+                    ProgramAcademicYear = new ProgramAcademicYearDTO
+                    {
+                        Id = s.ProgramAcademicYear.Id,
+                        AcademicYear = s.ProgramAcademicYear.AcademicYear
+                    },
                     Courses = s.Courses.Select(c => new CourseResponseApiDTO
                     {
                         Id = c.Id,

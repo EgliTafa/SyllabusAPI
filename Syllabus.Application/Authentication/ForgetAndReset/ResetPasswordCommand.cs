@@ -3,6 +3,7 @@ using MediatR;
 using Microsoft.AspNetCore.Identity;
 using Syllabus.ApiContracts.Authentication;
 using Syllabus.Domain.Users;
+using Syllabus.Application.Authentication;
 
 namespace Syllabus.Application.Authentication.ForgetAndReset
 {
@@ -23,26 +24,25 @@ namespace Syllabus.Application.Authentication.ForgetAndReset
 
             if (string.IsNullOrWhiteSpace(request.Email) || string.IsNullOrWhiteSpace(request.Token) || string.IsNullOrWhiteSpace(request.NewPassword))
             {
-                return Error.Validation("Email, token, and new password are required.");
+                return AuthenticationErrors.MissingRequiredFields;
             }
 
             if (!EmailValidator.IsValid(request.Email))
             {
-                return Error.Validation("Invalid email format.");
+                return AuthenticationErrors.InvalidEmailFormat;
             }
 
             var user = await _userManager.FindByEmailAsync(request.Email);
             if (user == null)
             {
-                return Error.NotFound("User not found.");
+                return AuthenticationErrors.UserByEmailNotFound;
             }
 
             var resetResult = await _userManager.ResetPasswordAsync(user, request.Token, request.NewPassword);
 
             if (!resetResult.Succeeded)
             {
-                var errors = resetResult.Errors.Select(e => e.Description).ToList();
-                return Error.Validation(string.Join(" | ", errors));
+                return AuthenticationErrors.UserUpdateFailed;
             }
 
             return new ResetPasswordResponseApiDTO { Message = "Password has been successfully reset." };

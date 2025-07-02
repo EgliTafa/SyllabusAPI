@@ -22,12 +22,12 @@ namespace Syllabus.Application.Courses.UpdateDetail
 
             if (course is null)
             {
-                return Error.NotFound(description: $"Course with ID {request.CourseId} not found.");
+                return CourseErrors.CourseNotFound;
             }
 
             if (course.Detail is null)
             {
-                return Error.NotFound(description: $"Course with ID {request.CourseId} does not have details to update.");
+                return CourseErrors.CourseDetailNotFound;
             }
 
             course.Detail.AcademicProgram = request.Request.AcademicProgram;
