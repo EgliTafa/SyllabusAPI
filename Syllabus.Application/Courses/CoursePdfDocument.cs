@@ -15,8 +15,6 @@ namespace Syllabus.Application.Courses
         private const string Department = "DEPARTAMENTI I INFORMATIKËS";
         private const string Address = "Adresa: Bulevardi 'Zogu I', Nr. 25/1, Tiranë, Tel. & Fax: +355 4 2229560, www.fshn.edu.al";
         private const string Website = "www.fshn.edu.al";
-        private const string DepartmentHead = "Prof. Alda Kika";
-        private const string CourseResponsible = "Julian Fejzaj";
 
         public CoursePdfDocument(Course course, string logoPath)
         {
@@ -195,8 +193,6 @@ namespace Syllabus.Application.Courses
         {
             container.Column(col =>
             {
-                col.Item().Text($"Përgjegjësi i lëndës: {CourseResponsible}").FontColor(Colors.Red.Medium).Bold();
-                col.Item().Text($"Përgjegjësi i Departamentit: {DepartmentHead}").FontColor(Colors.Red.Medium).Bold();
                 col.Item().PaddingTop(10).Text(Address).FontSize(9).AlignCenter();
                 col.Item().Text(Website).FontSize(9).AlignCenter().FontColor(Colors.Blue.Medium);
             });

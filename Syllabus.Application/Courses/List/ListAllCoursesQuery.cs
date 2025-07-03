@@ -23,7 +23,7 @@ public class ListAllCoursesQueryHandler : IRequestHandler<ListAllCoursesQuery, E
         if (allCourses == null)
         {
             return new ListAllCoursesResponseApiDTO
-            {
+        {
                 Courses = new List<CourseResponseApiDTO>(),
                 TotalCount = 0,
                 CurrentPage = request.Request.Page,
@@ -84,38 +84,38 @@ public class ListAllCoursesQueryHandler : IRequestHandler<ListAllCoursesQuery, E
         var pagedCourses = filteredCourses.Skip(skip).Take(request.Request.PageSize).ToList();
 
         var courseDtos = pagedCourses.Select(course => new CourseResponseApiDTO
-        {
-            Id = course.Id,
-            Title = course.Title,
-            Code = course.Code,
-            Semester = course.Semester,
-            Credits = course.Credits,
-            Year = course.Year,
-            LectureHours = course.LectureHours,
-            SeminarHours = course.SeminarHours,
-            LabHours = course.LabHours,
-            PracticeHours = course.PracticeHours,
-            AcademicProgram = course.Detail?.AcademicProgram,
-            AcademicYear = course.Detail?.AcademicYear,
-            Language = course.Detail?.Language,
-            CourseTypeLabel = course.Detail?.CourseTypeLabel,
-            EthicsCode = course.Detail?.EthicsCode,
-            ExamMethod = course.Detail?.ExamMethod,
-            TeachingFormat = course.Detail?.TeachingFormat,
-            TeachingPlan = course.Detail?.TeachingPlan,
-            EvaluationBreakdown = course.Detail?.EvaluationBreakdown,
-            Objective = course.Detail?.Objective,
-            KeyConcepts = course.Detail?.KeyConcepts,
-            Prerequisites = course.Detail?.Prerequisites,
-            SkillsAcquired = course.Detail?.SkillsAcquired,
-            CourseResponsible = course.Detail?.CourseResponsible,
-            Topics = course.Detail?.Topics?.Select(t => new TopicResponseApiDTO
             {
-                Title = t.Title,
-                Hours = t.Hours,
-                Reference = t.Reference
-            }).ToList(),
-            ElectiveGroup = course.ElectiveGroup
+                Id = course.Id,
+                Title = course.Title,
+                Code = course.Code,
+                Semester = course.Semester,
+                Credits = course.Credits,
+                Year = course.Year,
+                LectureHours = course.LectureHours,
+                SeminarHours = course.SeminarHours,
+                LabHours = course.LabHours,
+                PracticeHours = course.PracticeHours,
+                AcademicProgram = course.Detail?.AcademicProgram,
+                AcademicYear = course.Detail?.AcademicYear,
+                Language = course.Detail?.Language,
+                CourseTypeLabel = course.Detail?.CourseTypeLabel,
+                EthicsCode = course.Detail?.EthicsCode,
+                ExamMethod = course.Detail?.ExamMethod,
+                TeachingFormat = course.Detail?.TeachingFormat,
+                TeachingPlan = course.Detail?.TeachingPlan,
+                EvaluationBreakdown = course.Detail?.EvaluationBreakdown,
+                Objective = course.Detail?.Objective,
+                KeyConcepts = course.Detail?.KeyConcepts,
+                Prerequisites = course.Detail?.Prerequisites,
+                SkillsAcquired = course.Detail?.SkillsAcquired,
+                CourseResponsible = course.Detail?.CourseResponsible,
+                Topics = course.Detail?.Topics?.Select(t => new TopicResponseApiDTO
+                {
+                    Title = t.Title,
+                    Hours = t.Hours,
+                    Reference = t.Reference
+                }).ToList(),
+                ElectiveGroup = course.ElectiveGroup
         }).ToList();
 
         return new ListAllCoursesResponseApiDTO
