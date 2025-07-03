@@ -3,16 +3,36 @@ using brevo_csharp.Model;
 using Microsoft.Extensions.Options;
 using Syllabus.Domain.Services.Email;
 using Syllabus.Util.Options;
+using Microsoft.Extensions.Hosting;
+using Microsoft.Extensions.Logging;
 
 namespace Syllabus.Infrastructure.Services.Email
 {
     public class BrevoEmailService : IBrevoEmailService
     {
         private readonly EmailOptions _emailOptions;
+        private readonly string _wwwrootPath;
+        private static string? _resetPasswordTemplate;
+        private static string? _emailConfirmationTemplate;
+        private ILogger<BrevoEmailService> _logger;
 
-        public BrevoEmailService(IOptions<EmailOptions> emailOptions)
+        public BrevoEmailService(IOptions<EmailOptions> emailOptions, IHostEnvironment env, ILogger<BrevoEmailService> logger)
         {
             _emailOptions = emailOptions.Value ?? throw new ArgumentNullException(nameof(emailOptions));
+            // Use the content root path to find wwwroot in all environments
+            _wwwrootPath = Path.Combine(env.ContentRootPath, "SyllabusAPI", "wwwroot");
+            _logger = logger ?? throw new ArgumentNullException(nameof(logger));
+        }
+
+        private string LoadTemplate(string fileName)
+        {
+            var path = Path.Combine(_wwwrootPath, fileName);
+            if (!System.IO.File.Exists(path))
+            {
+                _logger.LogError("Email template not found: {Path}", path);
+                throw new FileNotFoundException($"Email template not found: {path}");
+            }
+            return System.IO.File.ReadAllText(path);
         }
 
         public async ValueTask SendPasswordResetEmailAsync(string toEmail, string resetToken)
@@ -25,6 +45,13 @@ namespace Syllabus.Infrastructure.Services.Email
 
             var apiInstance = new TransactionalEmailsApi();
             var resetLink = $"{_emailOptions.ResetPasswordUrl}?token={Uri.EscapeDataString(resetToken)}";
+            var logoUrl = string.IsNullOrEmpty(_emailOptions.BaseUrl) ? "http://localhost:5190/logo.png" : _emailOptions.BaseUrl.TrimEnd('/') + "/logo.png";
+
+            if (_resetPasswordTemplate == null)
+                _resetPasswordTemplate = LoadTemplate("reset-password-email.html");
+            var html = _resetPasswordTemplate
+                .Replace("{{logoUrl}}", logoUrl)
+                .Replace("{{resetLink}}", resetLink);
 
             var sendSmtpEmail = new SendSmtpEmail
             {
@@ -34,11 +61,11 @@ namespace Syllabus.Infrastructure.Services.Email
                     Name = _emailOptions.SenderName
                 },
                 To = new List<SendSmtpEmailTo>
-        {
-            new SendSmtpEmailTo(toEmail)
-        },
+                {
+                    new SendSmtpEmailTo(toEmail)
+                },
                 Subject = "Reset Your Password",
-                HtmlContent = $"<p>Click <a href='{resetLink}'>here</a> to reset your password.</p>"
+                HtmlContent = html
             };
 
             await apiInstance.SendTransacEmailAsync(sendSmtpEmail);
@@ -56,6 +83,13 @@ namespace Syllabus.Infrastructure.Services.Email
 
                 var apiInstance = new TransactionalEmailsApi();
                 var confirmLink = $"{_emailOptions.ResetPasswordUrl}?email={Uri.EscapeDataString(toEmail)}&token={Uri.EscapeDataString(confirmationToken)}";
+                var logoUrl = string.IsNullOrEmpty(_emailOptions.BaseUrl) ? "http://localhost:5190/logo.png" : _emailOptions.BaseUrl.TrimEnd('/') + "/logo.png";
+
+                if (_emailConfirmationTemplate == null)
+                    _emailConfirmationTemplate = LoadTemplate("email-confirmation-email.html");
+                var html = _emailConfirmationTemplate
+                    .Replace("{{logoUrl}}", logoUrl)
+                    .Replace("{{confirmLink}}", confirmLink);
 
                 var sendSmtpEmail = new SendSmtpEmail
                 {
@@ -69,14 +103,15 @@ namespace Syllabus.Infrastructure.Services.Email
                         new SendSmtpEmailTo(toEmail)
                     },
                     Subject = "Confirm Your Email",
-                    HtmlContent = $"<p>Click <a href='{confirmLink}'>here</a> to confirm your email address.</p>"
+                    HtmlContent = html
                 };
 
                 await apiInstance.SendTransacEmailAsync(sendSmtpEmail);
                 return true;
             }
-            catch
+            catch(Exception ex)
             {
+                _logger.LogError(ex, "Failed to send email confirmation to {Email}", toEmail);
                 return false;
             }
         }

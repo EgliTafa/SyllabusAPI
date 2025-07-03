@@ -8,6 +8,7 @@ namespace Syllabus.Util.Options
         public string SenderEmail { get; set; }
         public string SenderName { get; set; }
         public string ResetPasswordUrl { get; set; }
+        public string EmailConfirmationUrl { get; set; }
         public int DefaultListId { get; set; }
         public string BaseUrl { get; set; } = "https://api.brevo.com/v3/";
     }
