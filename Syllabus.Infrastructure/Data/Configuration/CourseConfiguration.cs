@@ -20,6 +20,9 @@ namespace Syllabus.Infrastructure.Data.Configuration
                 .IsRequired()
                 .HasMaxLength(50);
 
+            builder.Property(c => c.Year)
+                .IsRequired();
+
             builder.Property(c => c.Semester)
                 .IsRequired();
 
@@ -32,6 +35,9 @@ namespace Syllabus.Infrastructure.Data.Configuration
             builder.Property(c => c.LabHours)
                 .IsRequired();
 
+            builder.Property(c => c.PracticeHours)
+                .IsRequired();
+
             builder.Property(c => c.Credits)
                 .IsRequired();
 
@@ -42,6 +48,9 @@ namespace Syllabus.Infrastructure.Data.Configuration
             builder.Property(c => c.Type)
                 .HasConversion<int>()
                 .IsRequired();
+
+            builder.Property(c => c.ElectiveGroup)
+                .HasMaxLength(50);
 
             builder.Ignore(c => c.TotalHours); // calculated property, not mapped
         }

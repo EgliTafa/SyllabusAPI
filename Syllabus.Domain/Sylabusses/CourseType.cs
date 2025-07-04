@@ -1,5 +1,8 @@
-﻿namespace Syllabus.Domain.Sylabusses
+﻿using System.Text.Json.Serialization;
+
+namespace Syllabus.Domain.Sylabusses
 {
+    [JsonConverter(typeof(JsonStringEnumConverter))]
     public enum CourseType
     {
         Mandatory, // B - Bazë

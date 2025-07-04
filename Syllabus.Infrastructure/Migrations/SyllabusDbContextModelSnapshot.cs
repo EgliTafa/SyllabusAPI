@@ -171,6 +171,10 @@ namespace Syllabus.Infrastructure.Migrations
                     b.Property<int>("Credits")
                         .HasColumnType("int");
 
+                    b.Property<string>("ElectiveGroup")
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
                     b.Property<int>("Evaluation")
                         .HasColumnType("int");
 
@@ -178,6 +182,9 @@ namespace Syllabus.Infrastructure.Migrations
                         .HasColumnType("int");
 
                     b.Property<int>("LectureHours")
+                        .HasColumnType("int");
+
+                    b.Property<int>("PracticeHours")
                         .HasColumnType("int");
 
                     b.Property<int>("Semester")
@@ -197,11 +204,183 @@ namespace Syllabus.Infrastructure.Migrations
                     b.Property<int>("Type")
                         .HasColumnType("int");
 
+                    b.Property<int>("Year")
+                        .HasColumnType("int");
+
                     b.HasKey("Id");
 
                     b.HasIndex("SylabusId");
 
                     b.ToTable("Courses", (string)null);
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.CourseDetail", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicProgram")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("AcademicYear")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("CourseId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("CourseResponsible")
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<string>("CourseTypeLabel")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<int>("Credits")
+                        .HasColumnType("int");
+
+                    b.Property<string>("EthicsCode")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("ExamMethod")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<string>("KeyConcepts")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Language")
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
+
+                    b.Property<string>("Objective")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Prerequisites")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("SkillsAcquired")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("TeachingFormat")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("CourseId")
+                        .IsUnique();
+
+                    b.ToTable("CourseDetails", (string)null);
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Department", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Departments");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Program", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<int>("DepartmentId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Description")
+                        .IsRequired()
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("DepartmentId");
+
+                    b.HasIndex("Name")
+                        .IsUnique();
+
+                    b.ToTable("Programs");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.ProgramAcademicYear", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<string>("AcademicYear")
+                        .IsRequired()
+                        .HasMaxLength(20)
+                        .HasColumnType("nvarchar(20)");
+
+                    b.Property<int>("ProgramId")
+                        .HasColumnType("int");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProgramId", "AcademicYear")
+                        .IsUnique();
+
+                    b.ToTable("ProgramAcademicYears");
                 });
 
             modelBuilder.Entity("Syllabus.Domain.Sylabusses.Sylabus", b =>
@@ -212,14 +391,55 @@ namespace Syllabus.Infrastructure.Migrations
 
                     SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
 
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
                     b.Property<string>("Name")
+                        .IsRequired()
+                        .HasMaxLength(255)
+                        .HasColumnType("nvarchar(255)");
+
+                    b.Property<int>("ProgramAcademicYearId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime?>("UpdatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("Id");
+
+                    b.HasIndex("ProgramAcademicYearId");
+
+                    b.ToTable("Syllabuses", (string)null);
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Topic", b =>
+                {
+                    b.Property<int>("Id")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+
+                    b.Property<int>("CourseDetailId")
+                        .HasColumnType("int");
+
+                    b.Property<int>("Hours")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Reference")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("Title")
                         .IsRequired()
                         .HasMaxLength(255)
                         .HasColumnType("nvarchar(255)");
 
                     b.HasKey("Id");
 
-                    b.ToTable("Syllabuses", (string)null);
+                    b.HasIndex("CourseDetailId");
+
+                    b.ToTable("CourseTopics", (string)null);
                 });
 
             modelBuilder.Entity("Syllabus.Domain.Users.UserEntity", b =>
@@ -260,6 +480,9 @@ namespace Syllabus.Infrastructure.Migrations
                     b.Property<DateTimeOffset?>("LockoutEnd")
                         .HasColumnType("datetimeoffset");
 
+                    b.Property<string>("LockoutReason")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<string>("NormalizedEmail")
                         .HasMaxLength(256)
                         .HasColumnType("nvarchar(256)");
@@ -278,7 +501,6 @@ namespace Syllabus.Infrastructure.Migrations
                         .HasColumnType("bit");
 
                     b.Property<string>("ProfilePictureUrl")
-                        .IsRequired()
                         .HasMaxLength(500)
                         .HasColumnType("nvarchar(500)");
 
@@ -372,6 +594,137 @@ namespace Syllabus.Infrastructure.Migrations
                         .OnDelete(DeleteBehavior.Cascade);
                 });
 
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.CourseDetail", b =>
+                {
+                    b.HasOne("Syllabus.Domain.Sylabusses.Course", "Course")
+                        .WithOne("Detail")
+                        .HasForeignKey("Syllabus.Domain.Sylabusses.CourseDetail", "CourseId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.OwnsOne("Syllabus.Domain.Sylabusses.EvaluationBreakdown", "EvaluationBreakdown", b1 =>
+                        {
+                            b1.Property<int>("CourseDetailId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("FinalExamPercent")
+                                .HasColumnType("int")
+                                .HasAnnotation("Relational:JsonPropertyName", "finalExamPercent");
+
+                            b1.Property<int>("ParticipationPercent")
+                                .HasColumnType("int")
+                                .HasAnnotation("Relational:JsonPropertyName", "participationPercent");
+
+                            b1.Property<int>("Test1Percent")
+                                .HasColumnType("int")
+                                .HasAnnotation("Relational:JsonPropertyName", "test1Percent");
+
+                            b1.Property<int>("Test2Percent")
+                                .HasColumnType("int")
+                                .HasAnnotation("Relational:JsonPropertyName", "test2Percent");
+
+                            b1.Property<int>("Test3Percent")
+                                .HasColumnType("int")
+                                .HasAnnotation("Relational:JsonPropertyName", "test3Percent");
+
+                            b1.HasKey("CourseDetailId");
+
+                            b1.ToTable("CourseDetails");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CourseDetailId");
+                        });
+
+                    b.OwnsOne("Syllabus.Domain.Sylabusses.TeachingPlan", "TeachingPlan", b1 =>
+                        {
+                            b1.Property<int>("CourseDetailId")
+                                .HasColumnType("int");
+
+                            b1.Property<int>("ExerciseHours")
+                                .HasColumnType("int")
+                                .HasAnnotation("Relational:JsonPropertyName", "exerciseHours");
+
+                            b1.Property<int>("IndividualStudyHours")
+                                .HasColumnType("int")
+                                .HasAnnotation("Relational:JsonPropertyName", "individualStudyHours");
+
+                            b1.Property<int>("LabHours")
+                                .HasColumnType("int")
+                                .HasAnnotation("Relational:JsonPropertyName", "labHours");
+
+                            b1.Property<int>("LectureHours")
+                                .HasColumnType("int")
+                                .HasAnnotation("Relational:JsonPropertyName", "lectureHours");
+
+                            b1.Property<int>("PracticeHours")
+                                .HasColumnType("int")
+                                .HasAnnotation("Relational:JsonPropertyName", "practiceHours");
+
+                            b1.Property<int>("WeeklyHours")
+                                .HasColumnType("int")
+                                .HasAnnotation("Relational:JsonPropertyName", "weeklyHours");
+
+                            b1.HasKey("CourseDetailId");
+
+                            b1.ToTable("CourseDetails");
+
+                            b1.WithOwner()
+                                .HasForeignKey("CourseDetailId");
+                        });
+
+                    b.Navigation("Course");
+
+                    b.Navigation("EvaluationBreakdown")
+                        .IsRequired();
+
+                    b.Navigation("TeachingPlan")
+                        .IsRequired();
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Program", b =>
+                {
+                    b.HasOne("Syllabus.Domain.Sylabusses.Department", "Department")
+                        .WithMany("Programs")
+                        .HasForeignKey("DepartmentId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("Department");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.ProgramAcademicYear", b =>
+                {
+                    b.HasOne("Syllabus.Domain.Sylabusses.Program", "Program")
+                        .WithMany("AcademicYears")
+                        .HasForeignKey("ProgramId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Program");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Sylabus", b =>
+                {
+                    b.HasOne("Syllabus.Domain.Sylabusses.ProgramAcademicYear", "ProgramAcademicYear")
+                        .WithMany("Syllabuses")
+                        .HasForeignKey("ProgramAcademicYearId")
+                        .OnDelete(DeleteBehavior.Restrict)
+                        .IsRequired();
+
+                    b.Navigation("ProgramAcademicYear");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Topic", b =>
+                {
+                    b.HasOne("Syllabus.Domain.Sylabusses.CourseDetail", "CourseDetail")
+                        .WithMany("Topics")
+                        .HasForeignKey("CourseDetailId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("CourseDetail");
+                });
+
             modelBuilder.Entity("Syllabus.Domain.Users.UserEntity", b =>
                 {
                     b.OwnsOne("Syllabus.Domain.Users.PhoneNumber", "PhoneNumberInfo", b1 =>
@@ -405,6 +758,31 @@ namespace Syllabus.Infrastructure.Migrations
 
                     b.Navigation("PhoneNumberInfo")
                         .IsRequired();
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Course", b =>
+                {
+                    b.Navigation("Detail");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.CourseDetail", b =>
+                {
+                    b.Navigation("Topics");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Department", b =>
+                {
+                    b.Navigation("Programs");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.Program", b =>
+                {
+                    b.Navigation("AcademicYears");
+                });
+
+            modelBuilder.Entity("Syllabus.Domain.Sylabusses.ProgramAcademicYear", b =>
+                {
+                    b.Navigation("Syllabuses");
                 });
 
             modelBuilder.Entity("Syllabus.Domain.Sylabusses.Sylabus", b =>
