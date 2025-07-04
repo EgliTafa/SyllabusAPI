@@ -20,7 +20,7 @@ namespace Syllabus.Infrastructure.Services.Email
         {
             _emailOptions = emailOptions.Value ?? throw new ArgumentNullException(nameof(emailOptions));
             // Use the content root path to find wwwroot in all environments
-            _wwwrootPath = Path.Combine(env.ContentRootPath, "SyllabusAPI", "wwwroot");
+            _wwwrootPath = Path.Combine(env.ContentRootPath, "wwwroot");
             _logger = logger ?? throw new ArgumentNullException(nameof(logger));
         }
 
