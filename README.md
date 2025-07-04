@@ -36,7 +36,6 @@ SyllabusAPI/
 ├── Syllabus.ApiContracts/     → DTOs and API contracts
 ├── Syllabus.Util/             → Configuration, Helpers
 ├── docker-compose.yml         → Docker configuration
-├── -- Bachelor në Informatikë Syllabus.txt → Complete SQL seeding script
 └── README.md
 ```
 
