@@ -220,13 +220,6 @@ The system supports complete syllabus export:
 - Course details and topics
 - Teaching plans and evaluation breakdowns
 - University branding and styling
-
-### DOCX Export
-- Editable Word documents
-- Structured course information
-- Template-based generation
-- Customizable formatting
-
 ---
 
 ## 🧪 Testing via Swagger UI
