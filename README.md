@@ -346,9 +346,9 @@ This project is now **complete** and ready for production use. For future enhanc
 
 ## 🧑‍💻 Author
 
-**E. T.** – Junior .NET & React Developer
+**E. T.** – Intermediate .NET & React Developer
 
-**Project Completion Date**: December 2024
+**Project Completion Date**: July 2025
 
 ---
 
